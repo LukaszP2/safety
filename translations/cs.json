@@ -1,0 +1,88 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Safety System",
+        "description": "Configure the Safety System"
+      }
+    },
+    "abort": {
+      "already_configured": "Safety System is already configured"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Safety Options",
+        "description": "Update Safety System settings",
+        "data": {
+          "phone_notify": "Mobile notification service",
+          "speakers": "Media players for TTS announcements",
+          "use_persistent_notification": "HA notifications",
+          "water_valve": "Water valve",
+          "use_test_mode": "Test mode"
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "safety_status": {
+        "name": "Status",
+        "state": {
+          "safe": "Safe",
+          "alarm": "Alarm",
+          "test": "Test Mode",
+          "service_mode": "Service Mode"
+        }
+      }
+    },
+    "switch": {
+      "global_service_mode": {
+        "name": "Global Service Mode"
+      },
+      "geolocation": {
+        "name": "Location-based Detection"
+      },
+      "auto_config": {
+        "name": "Auto-configuration"
+      },
+      "category_service_mode": {
+        "name": "Service Mode"
+      },
+      "notify_ha": {
+        "name": "HA Notifications"
+      },
+      "notify_mobile": {
+        "name": "Mobile Notifications"
+      },
+      "notify_tts": {
+        "name": "Voice Alerts"
+      },
+      "notify_light": {
+        "name": "Light Alerts"
+      }
+    },
+    "button": {
+      "test_notify": {
+        "name": "Test Notifications"
+      },
+      "test_action": {
+        "name": "Test Actions"
+      },
+      "dismiss_alarm": {
+        "name": "Dismiss Alert"
+      }
+    },
+    "number": {
+      "repeat_interval": {
+        "name": "Alert Repeat Interval"
+      }
+    },
+    "text": {
+      "custom_msg": {
+        "name": "Custom Message"
+      }
+    }
+  }
+}

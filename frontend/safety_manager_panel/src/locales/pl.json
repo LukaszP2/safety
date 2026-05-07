@@ -1,0 +1,273 @@
+{
+    "panel": {
+      "title": "System Bezpieczeństwa",
+      "loading": "Ładowanie..."
+    },
+
+    "tabs": {
+      "summary": "Podsumowanie",
+      "hazards": "Zagrożenia",
+      "analytics": "Analityka",
+      "status": "Status",
+      "settings": "Ustawienia"
+    },
+
+    "summary": {
+      "recent_activity": "Ostatnia aktywność",
+      "no_activity": "Brak aktywności",
+      "system_status": "Stan Systemu",
+      "active_hazards": "Aktywne Zagrożenia",
+      "sensor_failures": "Awarie Czujników",
+      "low_battery": "Bateria Niski Poziom",
+      "safety_score": "Wynik Bezpieczeństwa"
+    },
+
+    "hazards": {
+      "addEntity": "➕ Dodaj encję",
+      "sensors": "Czujniki",
+      "actuators": "Urządzenia",
+      "matrix": "Matryca Trybów Domowych",
+      "channels": "Kanały Powiadomień i Skrypty",
+      "messages": "Tagi i Komunikaty",
+
+      "sensors_card": "Czujniki Detekcji",
+      "actuators_card": "Urządzenia Wykonawcze",
+      "predictions_card": "Encje Predykcyjne",
+
+      "predictions_title": "Encje Predykcyjne",
+
+      "locked_auto": "Edycja zablokowana. System sam dobiera czujniki i urządzenia.",
+      "locked_auto_pred": "Edycja predykcji zablokowana. System zarządza nimi automatycznie.",
+      "locked_global": "Edycja zablokowana przez ustawienia globalne.",
+
+      "goto_settings": "Przejdź do ustawień",
+
+      "test_notify": "Testuj Powiadomienia",
+      "test_alarm": "Symuluj Pełne Zagrożenie",
+      "dismiss": "Odwołaj Alarm",
+
+      "sensorIcon": "mdi:radar",
+      "actuatorIcon": "mdi:lightbulb-group",
+      "none": "Brak",
+
+      "categories": {
+        "water": "Zalanie",
+        "fire": "Pożar",
+        "gas": "Gazy",
+        "temperature": "Temperatura",
+        "power": "Zasilanie"
+      }
+    },
+
+    "analytics": {
+      "score_title": "Safety Score",
+      "trend_title": "Trend Bezpieczeństwa",
+      "audit_title": "Safety Audit Domu",
+      "predictions_title": "Predykcja Zagrożeń",
+      "reco_title": "Rekomendacje i Cele",
+
+      "trend_improving": "Rosnący (Poprawa)",
+      "trend_stable": "Stabilny",
+      "trend_declining": "Spadający",
+
+      "status_very_safe": "Bardzo bezpieczny",
+      "status_good": "Dobry poziom",
+      "status_medium": "Średni poziom",
+      "status_low": "Niski poziom",
+
+      "cat_fire": "Pożar",
+      "cat_water": "Zalanie",
+      "cat_gas": "Gazy",
+      "cat_env": "Środowisko",
+      "cat_power": "Zasilanie",
+      "cat_coverage": "Pokrycie czujnikami",
+
+      "pred_mold": "Ryzyko pleśni",
+      "pred_freeze": "Ryzyko zamarzania",
+      "pred_overheat": "Ryzyko przegrzania",
+      "pred_power": "Niestabilność zasilania",
+      "pred_leak": "Rosnąca wilgoć (Ryzyko zalania)",
+
+      "no_predictions": "Brak wykrytych zagrożeń długoterminowych. Dom jest bezpieczny!",
+
+      "target_score": "Cel Safety Score:",
+      "missing_to_reach": "Brakuje do osiągnięcia celu ({target}):",
+      "buy_now": "Kup sprzęt",
+      "freeze_risk": "Ryzyko zamarzania",
+      "overheat_risk": "Ryzyko przegrzania",
+      "monitoring_safe": "Stan prawidłowy (monitorowane)"
+    },
+
+    "settings": {
+      "system_management": "Zarządzanie Systemem",
+
+      "service_mode": "Tryb Serwisowy",
+      "service_mode_desc": "Tymczasowe wstrzymanie wszystkich alertów",
+
+      "auto_config_sensors": "Auto-Konfiguracja Sensorów",
+      "auto_config_sensors_desc": "System automatycznie wyszuka czujniki",
+
+      "auto_config_actuators": "Auto-Konfiguracja Urządzeń",
+      "auto_config_actuators_desc": "System automatycznie wyszuka urządzenia wykonawcze",
+
+      "predictions_title": "Predykcje Zagrożeń AI",
+      "auto_predictions": "Auto-Konfiguracja Predykcji",
+      "auto_predictions_desc": "Automatyczne przypisywanie encji predykcyjnych",
+
+      "home_modes": "Tryby Domowe",
+
+      "alarm_integration": "Integracja z alarmem",
+      "select_alarm": "Wybierz centralę alarmową...",
+      "selected": "Wybrano:",
+      "auto_selected": "Automatycznie wybrano:",
+
+      "custom_modes": "Własne",
+      "use_presence": "Użyj sprawdzania obecności w strefie",
+      "select_zone": "Wybierz strefę...",
+
+      "use_night_mode": "Użyj trybu nocnego",
+      "night_start": "Start nocy",
+      "night_end": "Koniec nocy",
+
+      "global_matrix_title": "Globalna Matryca Trybów",
+      "global_matrix_desc": "Nadpisuje edycję trybów w ryzykach",
+
+      "default_channels": "Domyślne Kanały Powiadomień",
+      "global_messages": "Globalne Komunikaty",
+
+      "popup_yes": "Tak",
+      "popup_cancel": "Anuluj",
+
+      "popup_sensors_title": "Auto-Konfiguracja Sensorów",
+      "popup_sensors_text": "UWAGA! Twoje ręczne czujniki zostaną zastąpione wykrytymi automatycznie.",
+
+      "popup_actuators_title": "Auto-Konfiguracja Urządzeń",
+      "popup_actuators_text": "UWAGA! Twoje ręczne urządzenia zostaną zastąpione wykrytymi automatycznie."
+    },
+
+    "channels": {
+      "ha_title": "Interfejs Home Assistant",
+      "ha_persistent": "Powiadomienie trwałe",
+      "ha_persistent_desc": "Ikona dzwonka w menu HA",
+
+      "push_title": "Powiadomienia Push",
+      "push_dnd": "Omijaj tryb Nie Przeszkadzać",
+
+      "tts_title": "Głośniki",
+      "volume": "Głośność",
+      "tts_repeat": "Powtarzaj komunikat",
+      "tts_interval": "Interwał powtórzeń (min)",
+
+      "siren_title": "Syreny",
+      "light_title": "Światła Alarmowe",
+      "light_effect": "Wymuś miganie",
+
+      "script_title": "Automatyzacje i Skrypty",
+      "script_skip": "Uruchom bez sprawdzania warunków",
+      "title": "Domyślne kanały powiadomień"
+    },
+
+    "messages": {
+      "title_label": "Tytuł Powiadomienia",
+      "msg_label": "Treść Powiadomienia",
+      "insert": "Wstaw:",
+      "sensor": "Czujnik",
+      "area": "Pomieszczenie",
+      "device": "Urządzenie",
+      "time": "Czas",
+      "global_title": "Globalne komunikaty",
+      "title": "Tytuł",
+      "message": "Treść",
+      "preview": "Podgląd"
+    },
+
+    "matrix": {
+      "mode": "Tryb",
+      "home": "Dom",
+      "away": "Poza domem",
+      "night": "Noc",
+      "vacation": "Wakacje",
+      "prediction": "Predykcja",
+
+      "actuators": "Urządzenia",
+      "notify_ha": "Powiadomienia HA",
+      "push": "Telefon",
+      "tts": "Głośniki",
+      "sirens": "Syreny",
+      "lights": "Światła",
+      "automations": "Skrypty"
+    },
+
+    "list": {
+      "add_entity": "Dodaj encję..."
+    },
+
+    "actions": {
+      "remove": "Usuń",
+      "cancel": "Anuluj",
+      "ok": "OK",
+      "yes": "Tak",
+      "no": "Nie"
+    },
+    "predictions": {
+      "title": "Predykcje zagrożeń AI",
+      "auto_config": "Auto-konfiguracja predykcji",
+      "auto_config_desc": "Automatyczne przypisywanie encji predykcyjnych do zagrożeń"
+    },
+    "system": {
+      "title": "Zarządzanie systemem",
+      "confirm": "Tak, wykonaj",
+      "cancel": "Anuluj",
+
+      "service_mode": "Tryb serwisowy",
+      "service_mode_desc": "Tymczasowe wstrzymanie wszystkich alertów",
+
+      "auto_sensors": "Auto-konfiguracja sensorów",
+      "auto_sensors_desc": "Zablokuj ręczną edycję. System od nowa wyszuka czujniki",
+
+      "auto_actuators": "Auto-konfiguracja urządzeń",
+      "auto_actuators_desc": "Zablokuj ręczną edycję. System wyszuka urządzenia wykonawcze",
+
+      "popup_sensors_title": "Auto-konfiguracja sensorów",
+      "popup_sensors_text": "Włączenie tej opcji usunie ręcznie wybrane czujniki i zastąpi je wykrytymi automatycznie z Home Assistant.",
+
+      "popup_actuators_title": "Auto-konfiguracja urządzeń",
+      "popup_actuators_text": "Włączenie tej opcji usunie ręcznie wybrane urządzenia wykonawcze i zastąpi je wykrytymi automatycznie."
+    },
+    "devices": {
+      "smoke_sensor": "Czujnik dymu",
+      "water_leak_sensor": "Czujnik zalania",
+      "co_detector": "Czujnik tlenku węgla",
+      "temperature_sensor": "Czujnik temperatury",
+      "power_meter": "Pomiar energii"
+    },
+    "status": {
+      "offline": "Offline",
+      "no_response_days": "{{days}}d brak odpowiedzi",
+      "unassigned_area": "Inne / Nieprzypisane",
+      "other_rooms": "Pozostałe",
+      "rooms": "Pokoje"
+    },
+    "summary": {
+      "system_status": "Status systemu",
+      "active_hazards": "Aktywne zagrożenia",
+      "sensor_failures": "Awarie czujników",
+      "low_battery": "Słabe baterie",
+      "safety_score": "Safety Score",
+      "recent_activity": "Ostatnia aktywność",
+      "no_activity": "Brak zdarzeń w systemie",
+      "no_data": "Brak danych",
+      "ai_analysis": "Analiza AI",
+      "ai_detected": "Wykryto",
+      "ai_clear": "Czysto",
+      "battery": "Stan czujników",
+      "offline_sensors": "Czujniki offline",
+      "offline": "Offline",
+      "battery_ok": "Wszystkie czujniki działają",
+      "actions": "Zarządzanie",
+      "maintenance_enable": "Włącz tryb serwisowy",
+      "maintenance_on": "TRYB SERWISOWY: WŁĄCZONY",
+      "close_water": "Zamknij wodę",
+      "dismiss_alerts": "Odwołaj alarmy"
+    }
+  }

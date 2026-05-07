@@ -1,0 +1,268 @@
+{
+    "panel": {
+      "title": "Safety System",
+      "loading": "Loading..."
+    },
+
+    "tabs": {
+      "summary": "Summary",
+      "hazards": "Hazards",
+      "analytics": "Analytics",
+      "status": "Status",
+      "settings": "Settings"
+    },
+
+    "summary": {
+      "recent_activity": "Recent activity",
+      "no_activity": "No activity",
+      "system_status": "System Status",
+      "active_hazards": "Active Hazards",
+      "sensor_failures": "Sensor Failures",
+      "low_battery": "Low Battery",
+      "safety_score": "Safety Score"
+    },
+
+    "hazards": {
+      "addEntity": "➕ Add entity",
+      "sensors": "Sensors",
+      "actuators": "Devices",
+      "matrix": "Home Modes Matrix",
+      "channels": "Notification Channels",
+      "messages": "Tags & Messages",
+
+      "sensors_card": "Detection Sensors",
+      "actuators_card": "Execution Devices",
+      "predictions_card": "Prediction Entities",
+
+      "predictions_title": "Prediction Entities",
+
+      "locked_auto": "Editing locked. System selects sensors automatically.",
+      "locked_auto_pred": "Prediction editing locked. Managed automatically.",
+      "locked_global": "Editing locked by global settings.",
+
+      "goto_settings": "Go to settings",
+
+      "test_notify": "Test notifications",
+      "test_alarm": "Simulate alarm",
+      "dismiss": "Dismiss alarm",
+
+      "sensorIcon": "mdi:radar",
+      "actuatorIcon": "mdi:lightbulb-group",
+      "none": "None",
+
+      "categories": {
+        "water": "Water",
+        "fire": "Fire",
+        "gas": "Gas",
+        "temperature": "Temperature",
+        "power": "Power"
+      }
+
+    },
+
+    "analytics": {
+      "score_title": "Safety Score",
+      "trend_title": "Safety Trend",
+      "audit_title": "Home Safety Audit",
+      "predictions_title": "Hazard Prediction",
+      "reco_title": "Recommendations & Goals",
+
+      "trend_improving": "Improving",
+      "trend_stable": "Stable",
+      "trend_declining": "Declining",
+
+      "status_very_safe": "Very Safe",
+      "status_good": "Good",
+      "status_medium": "Medium",
+      "status_low": "Low",
+
+      "cat_fire": "Fire",
+      "cat_water": "Water",
+      "cat_gas": "Gas",
+      "cat_env": "Environment",
+      "cat_power": "Power",
+      "cat_coverage": "Sensor Coverage",
+
+      "pred_mold": "Mold Risk",
+      "pred_freeze": "Freeze Risk",
+      "pred_overheat": "Overheat Risk",
+      "pred_power": "Power Instability",
+      "pred_leak": "Moisture Rising",
+
+      "no_predictions": "No long-term hazards detected.",
+
+      "target_score": "Target Safety Score:",
+      "missing_to_reach": "Missing to reach ({target}):",
+      "buy_now" : "Buy hardware",
+      "freeze_risk": "Freeze Risk",
+      "overheat_risk": "Overheat Risk",
+      "monitoring_safe": "Normal state (Monitored)"
+    },
+
+    "settings": {
+      "system_management": "System Management",
+
+      "service_mode": "Service Mode",
+      "service_mode_desc": "Temporarily pause all alerts",
+
+      "auto_config_sensors": "Auto-Config Sensors",
+      "auto_config_sensors_desc": "Automatically discover sensors",
+
+      "auto_config_actuators": "Auto-Config Actuators",
+      "auto_config_actuators_desc": "Automatically discover actuators",
+
+      "predictions_title": "AI Hazard Predictions",
+      "auto_predictions": "Auto-Config Predictions",
+      "auto_predictions_desc": "Automatically assign prediction entities",
+
+      "home_modes": "Home Modes",
+
+      "alarm_integration": "Alarm Integration",
+      "select_alarm": "Select alarm panel...",
+      "selected": "Selected:",
+      "auto_selected": "Auto-selected:",
+
+      "custom_modes": "Custom",
+      "use_presence": "Use presence detection",
+      "select_zone": "Select zone...",
+
+      "use_night_mode": "Use night mode",
+      "night_start": "Night start",
+      "night_end": "Night end",
+
+      "global_matrix_title": "Global Mode Matrix",
+      "global_matrix_desc": "Overrides hazard mode settings",
+
+      "default_channels": "Default Notification Channels",
+      "global_messages": "Global Messages",
+
+      "popup_yes": "Yes",
+      "popup_cancel": "Cancel"
+    },
+
+    "channels": {
+      "ha_title": "Home Assistant UI",
+      "ha_persistent": "Persistent Notification",
+      "ha_persistent_desc": "Bell icon in sidebar",
+
+      "push_title": "Push Notifications",
+      "push_dnd": "Bypass Do Not Disturb",
+
+      "tts_title": "Speakers",
+      "volume": "Volume",
+      "tts_repeat": "Repeat message",
+      "tts_interval": "Repeat interval",
+
+      "siren_title": "Sirens",
+      "light_title": "Alarm Lights",
+      "light_effect": "Flash effect",
+
+      "script_title": "Automations & Scripts",
+      "script_skip": "Skip conditions",
+      "title": "Default notification channels"
+    },
+
+    "messages": {
+      "title_label": "Notification Title",
+      "msg_label": "Notification Message",
+      "insert": "Insert:",
+      "sensor": "Sensor",
+      "area": "Area",
+      "device": "Device",
+      "time": "Time",
+      "global_title": "Global Messages",
+      "title": "Title",
+      "message": "Message",
+      "preview": "Preview"
+    },
+
+    "matrix": {
+      "mode": "Mode",
+      "home": "Home",
+      "away": "Away",
+      "night": "Night",
+      "vacation": "Vacation",
+      "prediction": "Prediction",
+
+      "actuators": "Devices",
+      "notify_ha": "HA Notifications",
+      "push": "Mobile",
+      "tts": "Speakers",
+      "sirens": "Sirens",
+      "lights": "Lights",
+      "automations": "Scripts"
+    },
+
+    "list": {
+      "add_entity": "Add entity..."
+    },
+
+    "actions": {
+      "remove": "Remove",
+      "cancel": "Cancel",
+      "ok": "OK",
+      "yes": "Yes",
+      "no": "No"
+    },
+    "predictions": {
+      "title": "AI Hazard Predictions",
+      "auto_config": "Automatic prediction configuration",
+      "auto_config_desc": "Automatically assign prediction entities to hazards"
+    },
+    "system": {
+      "title": "System management",
+      "confirm": "Yes, continue",
+      "cancel": "Cancel",
+
+      "service_mode": "Service mode",
+      "service_mode_desc": "Temporarily disable all alerts",
+
+      "auto_sensors": "Automatic sensor configuration",
+      "auto_sensors_desc": "Lock manual editing. The system will rediscover sensors",
+
+      "auto_actuators": "Automatic device configuration",
+      "auto_actuators_desc": "Lock manual editing. The system will rediscover actuators",
+
+      "popup_sensors_title": "Automatic sensor configuration",
+      "popup_sensors_text": "Enabling this option will remove your manually selected sensors and replace them with automatically discovered ones from Home Assistant.",
+
+      "popup_actuators_title": "Automatic device configuration",
+      "popup_actuators_text": "Enabling this option will remove your manually selected actuators and replace them with automatically discovered ones."
+    },
+    "devices": {
+      "smoke_sensor": "Smoke Sensor",
+      "water_leak_sensor": "Water Leak Sensor",
+      "co_detector": "CO Detector",
+      "temperature_sensor": "Temperature Sensor",
+      "power_meter": "Power Meter"
+    },
+    "status": {
+      "offline": "Offline",
+      "no_response_days": "{{days}}d no response",
+      "unassigned_area": "Unassigned",
+      "other_rooms": "Other",
+      "rooms": "Rooms"
+    },
+    "summary": {
+      "system_status": "System Status",
+      "active_hazards": "Active Hazards",
+      "sensor_failures": "Sensor Failures",
+      "low_battery": "Low Battery",
+      "safety_score": "Safety Score",
+      "recent_activity": "Recent Activity",
+      "no_activity": "No system events",
+      "no_data": "No data",
+      "ai_analysis": "AI Analysis",
+      "ai_detected": "Detected",
+      "ai_clear": "Clear",
+      "actions": "Actions",
+      "maintenance_enable": "Enable maintenance mode",
+      "maintenance_on": "MAINTENANCE MODE: ON",
+      "close_water": "Close water",
+      "dismiss_alerts": "Dismiss alarms",
+      "battery": "Sensor Health",
+      "offline_sensors": "Offline Sensors",
+      "offline": "Offline",
+      "battery_ok": "All sensors healthy"
+    }
+  }

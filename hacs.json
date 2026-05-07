@@ -1,0 +1,11 @@
+{
+  "name": "Safety Hub",
+  "render_readme": true,
+  "category": "integration",
+  "homeassistant": "2026.3.0",
+  "iot_class": "local_push",
+  "zip_release": true,
+  "filename": "safety.zip",
+  "domains": ["safety"],
+  "country": "PL"
+}
