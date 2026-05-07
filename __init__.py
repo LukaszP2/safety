@@ -1,6 +1,7 @@
 """Safety integration - Home hazard detection and notifications."""
 from __future__ import annotations
 
+import os
 import copy
 import logging
 from typing import Any
