@@ -207,29 +207,31 @@ this._updateSetting(cat,key,updated);
 
 }
 
-render(){
+ render(){
 
-const tr={
-sensorsTitle:this.tt("hazards.sensors")||"Sensors",
-actuatorsTitle:this.tt("hazards.actuators")||"Actuators",
-sensorsCardTitle:this.tt("hazards.sensors_card")||"Detection Sensors",
-actuatorsCardTitle:this.tt("hazards.actuators_card")||"Execution Devices",
-addEntity:this.tt("list.add_entity")||"Add entity...",
-matrixTitle:this.tt("hazards.matrix")||"Home Modes Matrix",
-channelsTitle:this.tt("hazards.channels")||"Notification Channels",
-messagesTitle:this.tt("hazards.messages")||"Messages",
-testNotify:this.tt("hazards.test_notify")||"Test Notifications",
-testAlarm:this.tt("hazards.test_alarm")||"Simulate Alarm",
-dismiss:this.tt("hazards.dismiss")||"Dismiss Alarm"
-};
+ const tr={
+ sensorsTitle:this.tt("hazards.sensors")||"Sensors",
+ actuatorsTitle:this.tt("hazards.actuators")||"Actuators",
+ sensorsCardTitle:this.tt("hazards.sensors_card")||"Detection Sensors",
+ actuatorsCardTitle:this.tt("hazards.actuators_card")||"Execution Devices",
+ addEntity:this.tt("list.add_entity")||"Add entity...",
+ matrixTitle:this.tt("hazards.matrix")||"Home Modes Matrix",
+ channelsTitle:this.tt("hazards.channels")||"Notification Channels",
+ messagesTitle:this.tt("hazards.messages")||"Messages",
+ testNotify:this.tt("hazards.test_notify")||"Test Notifications",
+ testAlarm:this.tt("hazards.test_alarm")||"Simulate Alarm",
+ dismiss:this.tt("hazards.dismiss")||"Dismiss Alarm"
+ };
 
-const activeCat=this.categories[this._activeTab].id;
+ const activeCat=this.categories[this._activeTab].id;
 
-const allConfig=this._localConfig||{};
-const globalCfg=allConfig.global||{};
-const cfg=allConfig[activeCat]||{};
+ const allConfig=this._localConfig||{};
+ const globalCfg=allConfig.global||{};
+ const cfg=allConfig[activeCat]||{};
 
-const showModes=globalCfg.use_home_modes===true;
+ const showModes=globalCfg.use_home_modes===true;
+ const autoConfigSensors=globalCfg.auto_config_sensors===true;
+ const autoConfigActuators=globalCfg.auto_config_actuators===true;
 
 return html`
 
@@ -261,17 +263,18 @@ ${tr.sensorsTitle}
 
 <div class="card-content">
 
-<entity-list-card
-.hass=${this.hass}
-.category=${activeCat}
-title=${tr.sensorsCardTitle}
-icon="mdi:eye-outline"
-.domains=${["binary_sensor","sensor"]}
-.list=${cfg.sensors}
-pickerPlaceholder=${tr.addEntity}
-@add-entity=${e=>this._addEntity(activeCat,"sensors",e.detail.entityId)}
-@remove-entity=${e=>this._removeEntity(activeCat,"sensors",e.detail.entityId)}
-></entity-list-card>
+ <entity-list-card
+ .hass=${this.hass}
+ .category=${activeCat}
+ title=${tr.sensorsCardTitle}
+ icon="mdi:eye-outline"
+ .domains=${["binary_sensor","sensor"]}
+ .list=${cfg.sensors}
+ pickerPlaceholder=${tr.addEntity}
+ .isReadOnly=${autoConfigSensors}
+ @add-entity=${e=>!autoConfigSensors&&this._addEntity(activeCat,"sensors",e.detail.entityId)}
+ @remove-entity=${e=>!autoConfigSensors&&this._removeEntity(activeCat,"sensors",e.detail.entityId)}
+ ></entity-list-card>
 
 </div>
 
@@ -312,17 +315,18 @@ ${tr.actuatorsTitle}
 
 <div class="card-content">
 
-<entity-list-card
-.hass=${this.hass}
-.category=${activeCat}
-title=${tr.actuatorsCardTitle}
-icon="mdi:power-plug"
-.domains=${["switch","valve","cover","button"]}
-.list=${cfg.actuators}
-pickerPlaceholder=${tr.addEntity}
-@add-entity=${e=>this._addEntity(activeCat,"actuators",e.detail.entityId)}
-@remove-entity=${e=>this._removeEntity(activeCat,"actuators",e.detail.entityId)}
-></entity-list-card>
+ <entity-list-card
+ .hass=${this.hass}
+ .category=${activeCat}
+ title=${tr.actuatorsCardTitle}
+ icon="mdi:power-plug"
+ .domains=${["switch","valve","cover","button"]}
+ .list=${cfg.actuators}
+ pickerPlaceholder=${tr.addEntity}
+ .isReadOnly=${autoConfigActuators}
+ @add-entity=${e=>!autoConfigActuators&&this._addEntity(activeCat,"actuators",e.detail.entityId)}
+ @remove-entity=${e=>!autoConfigActuators&&this._removeEntity(activeCat,"actuators",e.detail.entityId)}
+ ></entity-list-card>
 
 </div>
 
