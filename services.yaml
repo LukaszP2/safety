@@ -1,0 +1,26 @@
+update_settings:
+  name: "Aktualizuj ustawienia"
+  description: "Aktualizuje ustawienia dla integracji Bezpieczeństwo (Safety System)"
+  fields:
+    category:
+      name: "Kategoria"
+      description: "Kategoria zagrożenia (np. water, smoke, global)"
+      required: true
+      selector:
+        text:
+    key:
+      name: "Klucz"
+      description: "Klucz ustawienia (np. sensors, auto_config)"
+      required: true
+      selector:
+        text:
+    value:
+      name: "Wartość"
+      description: "Nowa wartość dla podanego klucza"
+      required: true
+      selector:
+        object:
+
+toggle_service_mode:
+  name: "Przełącz tryb serwisowy"
+  description: "Przełącza globalny tryb serwisowy (wstrzymuje wszystkie alerty)"

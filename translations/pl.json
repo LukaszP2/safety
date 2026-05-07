@@ -1,0 +1,88 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "System Bezpieczeństwa",
+        "description": "Skonfiguruj System Bezpieczeństwa"
+      }
+    },
+    "abort": {
+      "already_configured": "System Bezpieczeństwa jest już skonfigurowany"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Opcje Systemu Bezpieczeństwa",
+        "description": "Aktualizuj ustawienia Systemu Bezpieczeństwa",
+        "data": {
+          "phone_notify": "Usługa powiadomień mobilnych",
+          "speakers": "Głośniki (TTS)",
+          "use_persistent_notification": "Powiadomienia w Home Assistant",
+          "water_valve": "Zawór wody",
+          "use_test_mode": "Tryb testowy"
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "safety_status": {
+        "name": "Status",
+        "state": {
+          "safe": "Bezpiecznie",
+          "alarm": "Zagrożenie!",
+          "test": "Tryb serwisu",
+          "service_mode": "Tryb serwisu"
+        }
+      }
+    },
+    "switch": {
+      "global_service_mode": {
+        "name": "Globalny Tryb Serwisu"
+      },
+      "geolocation": {
+        "name": "Detekcja Na Podstawie Lokalizacji"
+      },
+      "auto_config": {
+        "name": "Autokonfiguracja"
+      },
+      "category_service_mode": {
+        "name": "Tryb Serwisu"
+      },
+      "notify_ha": {
+        "name": "Powiadomienia Home Assistant"
+      },
+      "notify_mobile": {
+        "name": "Powiadomienia Mobilne"
+      },
+      "notify_tts": {
+        "name": "Alerty Głosowe"
+      },
+      "notify_light": {
+        "name": "Alerty Oświetlenia"
+      }
+    },
+    "button": {
+      "test_notify": {
+        "name": "Testuj Powiadomienia"
+      },
+      "test_action": {
+        "name": "Testuj Akcje"
+      },
+      "dismiss_alarm": {
+        "name": "Odwołaj Alert"
+      }
+    },
+    "number": {
+      "repeat_interval": {
+        "name": "Interwał Powtórzenia Alertu"
+      }
+    },
+    "text": {
+      "custom_msg": {
+        "name": "Wiadomość Niestandardowa"
+      }
+    }
+  }
+}

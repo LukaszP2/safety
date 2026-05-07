@@ -1,0 +1,88 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Système de Sécurité",
+        "description": "Configurez le Système de Sécurité"
+      }
+    },
+    "abort": {
+      "already_configured": "Système de Sécurité est déjà configuré"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Options de Sécurité",
+        "description": "Mettez à jour les paramètres du Système de Sécurité",
+        "data": {
+          "phone_notify": "Service de notification mobile",
+          "speakers": "Lecteurs multimédias pour annonces TTS",
+          "use_persistent_notification": "Notifications HA",
+          "water_valve": "Robinet d'eau",
+          "use_test_mode": "Mode test"
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "safety_status": {
+        "name": "Statut",
+        "state": {
+          "safe": "Sûr",
+          "alarm": "Alarme",
+          "test": "Mode test",
+          "service_mode": "Mode Service"
+        }
+      }
+    },
+    "switch": {
+      "global_service_mode": {
+        "name": "Mode Service Global"
+      },
+      "geolocation": {
+        "name": "Détection Basée sur la Localisation"
+      },
+      "auto_config": {
+        "name": "Configuration Automatique"
+      },
+      "category_service_mode": {
+        "name": "Mode Service"
+      },
+      "notify_ha": {
+        "name": "Notifications HA"
+      },
+      "notify_mobile": {
+        "name": "Notifications Mobiles"
+      },
+      "notify_tts": {
+        "name": "Alertes Vocales"
+      },
+      "notify_light": {
+        "name": "Alertes Lumineuses"
+      }
+    },
+    "button": {
+      "test_notify": {
+        "name": "Tester les Notifications"
+      },
+      "test_action": {
+        "name": "Tester les Actions"
+      },
+      "dismiss_alarm": {
+        "name": "Rejeter l'Alerte"
+      }
+    },
+    "number": {
+      "repeat_interval": {
+        "name": "Intervalle de Répétition de l'Alerte"
+      }
+    },
+    "text": {
+      "custom_msg": {
+        "name": "Message Personnalisé"
+      }
+    }
+  }
+}

@@ -1,0 +1,88 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Sicherheitssystem",
+        "description": "Konfigurieren Sie das Sicherheitssystem"
+      }
+    },
+    "abort": {
+      "already_configured": "Sicherheitssystem ist bereits konfiguriert"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Sicherheitsoptionen",
+        "description": "Aktualisieren Sie die Einstellungen des Sicherheitssystems",
+        "data": {
+          "phone_notify": "Mobiler Benachrichtigungsdienst",
+          "speakers": "Mediaplayer für TTS-Ankündigungen",
+          "use_persistent_notification": "HA-Benachrichtigungen",
+          "water_valve": "Wasserhahn",
+          "use_test_mode": "Testmodus"
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "safety_status": {
+        "name": "Status",
+        "state": {
+          "safe": "Sicher",
+          "alarm": "Alarm",
+          "test": "Testmodus",
+          "service_mode": "Servicemodus"
+        }
+      }
+    },
+    "switch": {
+      "global_service_mode": {
+        "name": "Globaler Servicemodus"
+      },
+      "geolocation": {
+        "name": "Standortbasierte Erkennung"
+      },
+      "auto_config": {
+        "name": "Automatische Konfiguration"
+      },
+      "category_service_mode": {
+        "name": "Servicemodus"
+      },
+      "notify_ha": {
+        "name": "HA-Benachrichtigungen"
+      },
+      "notify_mobile": {
+        "name": "Mobile Benachrichtigungen"
+      },
+      "notify_tts": {
+        "name": "Sprachalerts"
+      },
+      "notify_light": {
+        "name": "Lichtalerts"
+      }
+    },
+    "button": {
+      "test_notify": {
+        "name": "Benachrichtigungen testen"
+      },
+      "test_action": {
+        "name": "Aktionen testen"
+      },
+      "dismiss_alarm": {
+        "name": "Alert verwerfen"
+      }
+    },
+    "number": {
+      "repeat_interval": {
+        "name": "Wiederholungsintervall für Alert"
+      }
+    },
+    "text": {
+      "custom_msg": {
+        "name": "Benutzerdefinierte Nachricht"
+      }
+    }
+  }
+}

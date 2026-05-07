@@ -1,0 +1,40 @@
+safety:1 The resource http://172.29.78.179:8123/static/fonts/roboto/Roboto-Medium.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
+safety:1 The resource http://172.29.78.179:8123/static/fonts/roboto/Roboto-Regular.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
+safety-panel.js:852 [_removeEntity] catId=water, key=sensors, remove=binary_sensor.wirtualny_czujnik_zalania
+safety-panel.js:852 [_removeEntity] currentList before: (2) ['binary_sensor.wirtualny_czujnik_zalania', 'binary_sensor.basement_floor_wet']
+safety-panel.js:854 [_removeEntity] newList after: ['binary_sensor.basement_floor_wet']
+safety-panel.js:816 [_saveConfig] calling service: category=water, key=sensors, value= ['binary_sensor.basement_floor_wet']
+safety-panel.js:818 [_saveConfig] statusEntityId: sensor.safety_central_hub_status_systemu
+safety-panel.js:823 [_saveConfig] statusObj.attributes: {unique_key: 'status', category_config: {…}, auto_config: false, active_alerts: Array(1), icon: 'mdi:shield-alert', …}
+safety-panel.js:825 [_saveConfig] old state value: (2) ['binary_sensor.wirtualny_czujnik_zalania', 'binary_sensor.basement_floor_wet']
+safety-panel.js:830 [_saveConfig] polling 500ms... newValue: (2) ['binary_sensor.wirtualny_czujnik_zalania', 'binary_sensor.basement_floor_wet']
+safety-panel.js:837 [_saveConfig] ✅ service call success
+safety-panel.js:830 [_saveConfig] polling 1000ms... newValue: (2) ['binary_sensor.wirtualny_czujnik_zalania', 'binary_sensor.basement_floor_wet']
+safety-panel.js:830 [_saveConfig] polling 1500ms... newValue: (2) ['binary_sensor.wirtualny_czujnik_zalania', 'binary_sensor.basement_floor_wet']
+safety-panel.js:830 [_saveConfig] polling 2000ms... newValue: (2) ['binary_sensor.wirtualny_czujnik_zalania', 'binary_sensor.basement_floor_wet']
+safety-panel.js:830 [_saveConfig] polling 2500ms... newValue: (2) ['binary_sensor.wirtualny_czujnik_zalania', 'binary_sensor.basement_floor_wet']
+safety-panel.js:830 [_saveConfig] polling 3000ms... newValue: (2) ['binary_sensor.wirtualny_czujnik_zalania', 'binary_sensor.basement_floor_wet']
+safety-panel.js:832 [_saveConfig] ❌ Timeout waiting for state change after 3s (30 polls)
+(anonymous) @ safety-panel.js:832
+setTimeout
+_saveConfig @ safety-panel.js:831
+_removeEntity @ safety-panel.js:854
+(anonymous) @ safety-panel.js:912
+handleEvent @ safety-panel.js:450
+safety-panel.js:834 [_saveConfig] final state still: (2) ['binary_sensor.wirtualny_czujnik_zalania', 'binary_sensor.basement_floor_wet']
+(anonymous) @ safety-panel.js:834
+setTimeout
+_saveConfig @ safety-panel.js:831
+_removeEntity @ safety-panel.js:854
+(anonymous) @ safety-panel.js:912
+handleEvent @ safety-panel.js:450
+2026-03-10 16:48:10.022 WARNING (SyncWorker_0) [homeassistant.loader] We found a custom integration safety which has not been tested by Home Assistant. This component might cause stability problems, be sure to disable it if you experience issues with Home Assistant
+2026-03-10 16:48:10.023 WARNING (SyncWorker_0) [homeassistant.loader] We found a custom integration hacs which has not been tested by Home Assistant. This component might cause stability problems, be sure to disable it if you experience issues with Home Assistant
+2026-03-10 16:48:10.024 WARNING (SyncWorker_0) [homeassistant.loader] We found a custom integration remote_homeassistant which has not been tested by Home Assistant. This component might cause stability problems, be sure to disable it if you experience issues with Home Assistant
+2026-03-10 16:48:11.348 DEBUG (MainThread) [custom_components.safety] Setting up Safety integration
+2026-03-10 16:48:11.810 DEBUG (MainThread) [custom_components.safety] Safety integration setup completed successfully
+2026-03-10 16:49:10.526 INFO (MainThread) [custom_components.safety] [service update_settings] START - cat=water, key=sensors
+2026-03-10 16:49:10.526 DEBUG (MainThread) [custom_components.safety] [service] Updated coordinator.category_config[water][sensors]
+2026-03-10 16:49:10.526 INFO (MainThread) [custom_components.safety] [service] ✅ Updating sensor state - coordinator.sensor EXISTS
+2026-03-10 16:49:10.526 INFO (MainThread) [custom_components.safety] [service] Sensor state written to hass
+2026-03-10 16:49:10.526 INFO (MainThread) [custom_components.safety] [service update_settings] END

@@ -1,0 +1,88 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Sistema de Seguridad",
+        "description": "Configure el Sistema de Seguridad"
+      }
+    },
+    "abort": {
+      "already_configured": "El Sistema de Seguridad ya está configurado"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Opciones de Seguridad",
+        "description": "Actualice la configuración del Sistema de Seguridad",
+        "data": {
+          "phone_notify": "Servicio de notificación móvil",
+          "speakers": "Reproductores multimedia para anuncios TTS",
+          "use_persistent_notification": "Notificaciones de HA",
+          "water_valve": "Válvula de agua",
+          "use_test_mode": "Modo de prueba"
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "safety_status": {
+        "name": "Estado",
+        "state": {
+          "safe": "Seguro",
+          "alarm": "Alarma",
+          "test": "Modo de Prueba",
+          "service_mode": "Modo de Servicio"
+        }
+      }
+    },
+    "switch": {
+      "global_service_mode": {
+        "name": "Modo de Servicio Global"
+      },
+      "geolocation": {
+        "name": "Detección Basada en Ubicación"
+      },
+      "auto_config": {
+        "name": "Autoconfiguración"
+      },
+      "category_service_mode": {
+        "name": "Modo de Servicio"
+      },
+      "notify_ha": {
+        "name": "Notificaciones de HA"
+      },
+      "notify_mobile": {
+        "name": "Notificaciones Móviles"
+      },
+      "notify_tts": {
+        "name": "Alertas de Voz"
+      },
+      "notify_light": {
+        "name": "Alertas de Luz"
+      }
+    },
+    "button": {
+      "test_notify": {
+        "name": "Probar Notificaciones"
+      },
+      "test_action": {
+        "name": "Probar Acciones"
+      },
+      "dismiss_alarm": {
+        "name": "Descartar Alerta"
+      }
+    },
+    "number": {
+      "repeat_interval": {
+        "name": "Intervalo de Repetición de Alerta"
+      }
+    },
+    "text": {
+      "custom_msg": {
+        "name": "Mensaje Personalizado"
+      }
+    }
+  }
+}

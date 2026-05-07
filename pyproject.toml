@@ -1,0 +1,22 @@
+[tool.ruff]
+# Ustawiamy cel na Pythona 3.13 (zgodnie z Twoim HA 2026.3)
+target-version = "py313"
+line-length = 88
+
+[tool.ruff.lint]
+# Wybieramy zestawy reguł (E/W - Flake8, F - Pyflakes, I - Isort, B - Bugbear)
+select = [
+    "E",    # pycodestyle errors
+    "W",    # pycodestyle warnings
+    "F",    # pyflakes
+    "I",    # isort
+    "B",    # flake8-bugbear
+    "SIM",  # flake8-simplify
+    "UP",   # pyupgrade
+    "N",    # pep8-naming
+]
+ignore = []
+
+[tool.ruff.lint.isort]
+# Automatyczne grupowanie importów (standard HA)
+section-order = ["future", "standard-library", "third-party", "first-party", "local-folder"]

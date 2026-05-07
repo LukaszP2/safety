@@ -1,0 +1,15 @@
+{
+  "domain": "safety",
+  "name": "Safety System",
+  "codeowners": ["@LukaszP2"],
+  "config_flow": true,
+  "documentation": "https://github.com/LukaszP2/safety",
+  "issue_tracker": "https://github.com/LukaszP2/safety/issues",
+  "requirements": [],
+  "version": "1.0.0",
+  "iot_class": "local_push",
+  "dependencies": [],
+  "homeassistant": "2026.1.0",
+  "integration_type": "device",
+  "loggers": ["custom_components.safety"]
+}

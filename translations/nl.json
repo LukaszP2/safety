@@ -1,0 +1,88 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Veiligheidssysteem",
+        "description": "Configureer het Veiligheidssysteem"
+      }
+    },
+    "abort": {
+      "already_configured": "Veiligheidssysteem is al geconfigureerd"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Veiligheidsopties",
+        "description": "Update de instellingen van het Veiligheidssysteem",
+        "data": {
+          "phone_notify": "Mobiele meldingsservice",
+          "speakers": "Mediaspelers voor TTS-aankondigingen",
+          "use_persistent_notification": "HA-meldingen",
+          "water_valve": "Waterkraan",
+          "use_test_mode": "Testmodus"
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "safety_status": {
+        "name": "Status",
+        "state": {
+          "safe": "Veilig",
+          "alarm": "Alarm",
+          "test": "Testmodus",
+          "service_mode": "Servicemodus"
+        }
+      }
+    },
+    "switch": {
+      "global_service_mode": {
+        "name": "Globale Servicemodus"
+      },
+      "geolocation": {
+        "name": "Op Locatie Gebaseerde Detectie"
+      },
+      "auto_config": {
+        "name": "Automatische Configuratie"
+      },
+      "category_service_mode": {
+        "name": "Servicemodus"
+      },
+      "notify_ha": {
+        "name": "HA-meldingen"
+      },
+      "notify_mobile": {
+        "name": "Mobiele Meldingen"
+      },
+      "notify_tts": {
+        "name": "Spraakwaarschuwingen"
+      },
+      "notify_light": {
+        "name": "Lichtwaarschuwingen"
+      }
+    },
+    "button": {
+      "test_notify": {
+        "name": "Meldingen Testen"
+      },
+      "test_action": {
+        "name": "Acties Testen"
+      },
+      "dismiss_alarm": {
+        "name": "Waarschuwing Sluiten"
+      }
+    },
+    "number": {
+      "repeat_interval": {
+        "name": "Herhalinginterval Waarschuwing"
+      }
+    },
+    "text": {
+      "custom_msg": {
+        "name": "Aangepast Bericht"
+      }
+    }
+  }
+}

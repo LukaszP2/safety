@@ -1,0 +1,88 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Система Безпеки",
+        "description": "Налаштуйте Систему Безпеки"
+      }
+    },
+    "abort": {
+      "already_configured": "Система Безпеки вже налаштована"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Параметри Безпеки",
+        "description": "Оновіть параметри Системи Безпеки",
+        "data": {
+          "phone_notify": "Сервіс мобільних сповіщень",
+          "speakers": "Медіаплеєри для оголошень TTS",
+          "use_persistent_notification": "Сповіщення HA",
+          "water_valve": "Запірний вентиль води",
+          "use_test_mode": "Режим тестування"
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "safety_status": {
+        "name": "Стан",
+        "state": {
+          "safe": "Безпечно",
+          "alarm": "Тривога",
+          "test": "Режим Тестування",
+          "service_mode": "Режим Обслуговування"
+        }
+      }
+    },
+    "switch": {
+      "global_service_mode": {
+        "name": "Глобальний Режим Обслуговування"
+      },
+      "geolocation": {
+        "name": "Виявлення на Основі Локації"
+      },
+      "auto_config": {
+        "name": "Автоматична Конфігурація"
+      },
+      "category_service_mode": {
+        "name": "Режим Обслуговування"
+      },
+      "notify_ha": {
+        "name": "Сповіщення HA"
+      },
+      "notify_mobile": {
+        "name": "Мобільні Сповіщення"
+      },
+      "notify_tts": {
+        "name": "Голосові Сповіщення"
+      },
+      "notify_light": {
+        "name": "Світлові Сповіщення"
+      }
+    },
+    "button": {
+      "test_notify": {
+        "name": "Протестувати Сповіщення"
+      },
+      "test_action": {
+        "name": "Протестувати Дії"
+      },
+      "dismiss_alarm": {
+        "name": "Скасувати Сповіщення"
+      }
+    },
+    "number": {
+      "repeat_interval": {
+        "name": "Інтервал Повторення Сповіщення"
+      }
+    },
+    "text": {
+      "custom_msg": {
+        "name": "Користувацьке Повідомлення"
+      }
+    }
+  }
+}
