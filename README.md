@@ -5,6 +5,10 @@
 [![license](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
 [![buy_me_a_coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-Donate-yellow.svg?style=for-the-badge)](https://www.buymeacoffee.com/yourusername)
 
+
+[![Otwórz repozytorium w HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=LukaszP2&repository=safety&category=integration)
+[![Dodaj integrację do Home Assistant](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=safety)
+
 **Safety Hub** is a state-of-the-art security dashboard that transforms your Home Assistant instance into a professional-grade hazard monitoring center. It prioritizes safety by aggregating fire, water, gas, and CO sensors into a single, intuitive interface.
 
 
@@ -26,6 +30,15 @@
 | ![Summary OK](https://via.placeholder.com/400x250?text=System+Safe+Status) | ![Summary Alert](https://via.placeholder.com/400x250?text=Active+Hazards+Alert) |
 
 ## 🚀 Installation
+
+### 🚀 Szybka instalacja (1 kliknięcie przez My Home Assistant)
+
+[![Otwórz repozytorium w HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=LukaszP2&repository=safety&category=integration)
+
+Po zainstalowaniu i ponownym uruchomieniu Home Assistant, kliknij poniższy przycisk, aby skonfigurować integrację:
+
+[![Dodaj integrację do Home Assistant](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=safety)
+
 
 ### Method 1: HACS (Recommended)
 1. Open **HACS** -> **Integrations**.
