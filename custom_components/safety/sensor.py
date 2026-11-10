@@ -81,7 +81,6 @@ class HazardStatusSensor(SensorEntity):
 
         self._attr_extra_state_attributes = {
             "unique_key": "status",
-            "category_config": self.coordinator.category_config,
             "auto_config": self.coordinator.entry_data.get("auto_config", True),
             "active_alerts": list(self.coordinator.active_hazards.keys()),
             "service_mode": getattr(self.coordinator, "global_service_mode", False),

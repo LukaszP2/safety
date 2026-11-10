@@ -8,7 +8,6 @@ from typing import Any
 from homeassistant.components.switch import SwitchEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
@@ -16,6 +15,20 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from .const import CHANNELS, DOMAIN, HAZARD_CATEGORIES
 
 _LOGGER = logging.getLogger(__name__)
+
+
+async def _async_save_category_setting(
+    coordinator: Any, entry_id: str, cat: str, key: str, value: Any
+) -> None:
+    """Save setting to category config and persist in entry options."""
+    if cat not in coordinator.category_config:
+        coordinator.category_config[cat] = {}
+    coordinator.category_config[cat][key] = value
+    entry = coordinator.hass.config_entries.async_get_entry(entry_id)
+    if entry:
+        new_options = dict(entry.options)
+        new_options["categories"] = coordinator.category_config
+        coordinator.hass.config_entries.async_update_entry(entry, options=new_options)
 
 
 async def async_setup_entry(
@@ -26,11 +39,6 @@ async def async_setup_entry(
     """Set up switch entry."""
     coordinator = hass.data[DOMAIN][entry.entry_id]
 
-    # Pobieramy rzeczywiste ID urządzenia hub z rejestru (wymagane przez via_device_id)
-    device_reg = dr.async_get(hass)
-    hub = device_reg.async_get_device(identifiers={(DOMAIN, entry.entry_id)})
-    hub_device_id = hub.id if hub else None
-
     switches = [
         GlobalServiceSwitch(coordinator, entry.entry_id),
         GeolocationSwitch(coordinator, entry.entry_id),
@@ -39,11 +47,11 @@ async def async_setup_entry(
 
     for cat in HAZARD_CATEGORIES:
         switches.append(
-            CategoryServiceSwitch(coordinator, entry.entry_id, cat, hub_device_id)
+            CategoryServiceSwitch(coordinator, entry.entry_id, cat)
         )
         for ch in CHANNELS:
             switches.append(
-                HazardChannelSwitch(coordinator, entry.entry_id, cat, ch, hub_device_id)
+                HazardChannelSwitch(coordinator, entry.entry_id, cat, ch)
             )
 
     async_add_entities(switches)
@@ -53,7 +61,7 @@ class GlobalServiceSwitch(SwitchEntity):
     """Switch for global service mode."""
 
     _attr_has_entity_name = True
-    _attr_translation_key = "global_service"
+    _attr_translation_key = "global_service_mode"
     _attr_icon = "mdi:shield-off"
     _attr_entity_category = EntityCategory.CONFIG
 
@@ -82,18 +90,22 @@ class GlobalServiceSwitch(SwitchEntity):
         self.coordinator.global_service_mode = True
         self._attr_is_on = True
         self.async_write_ha_state()
-        # Update sensor state
         if self.coordinator.sensor:
             self.coordinator.sensor.update_internal_state()
+        await _async_save_category_setting(
+            self.coordinator, self._entry_id, "global", "global_service_mode", True
+        )
 
     async def async_turn_off(self, **kwargs: Any) -> None:
         """Turn the switch off."""
         self.coordinator.global_service_mode = False
         self._attr_is_on = False
         self.async_write_ha_state()
-        # Update sensor state
         if self.coordinator.sensor:
             self.coordinator.sensor.update_internal_state()
+        await _async_save_category_setting(
+            self.coordinator, self._entry_id, "global", "global_service_mode", False
+        )
 
 
 class GeolocationSwitch(SwitchEntity):
@@ -127,12 +139,18 @@ class GeolocationSwitch(SwitchEntity):
         self.coordinator.use_geolocation = True
         self._attr_is_on = True
         self.async_write_ha_state()
+        await _async_save_category_setting(
+            self.coordinator, self._entry_id, "global", "geolocation", True
+        )
 
     async def async_turn_off(self, **kwargs: Any) -> None:
         """Turn the switch off."""
         self.coordinator.use_geolocation = False
         self._attr_is_on = False
         self.async_write_ha_state()
+        await _async_save_category_setting(
+            self.coordinator, self._entry_id, "global", "geolocation", False
+        )
 
 
 class AutoConfigSwitch(SwitchEntity):
@@ -202,7 +220,6 @@ class CategoryServiceSwitch(SwitchEntity):
         coordinator: Any,
         entry_id: str,
         category: str,
-        hub_device_id: str | None = None,
     ) -> None:
         """Initialize the switch."""
         self.coordinator = coordinator
@@ -215,7 +232,7 @@ class CategoryServiceSwitch(SwitchEntity):
             identifiers={(DOMAIN, f"{self._entry_id}_{self.category}")},
             name=f"Module: {self.category.capitalize()}",
             manufacturer="Safety Systems",
-            via_device_id=hub_device_id,
+            via_device=(DOMAIN, self._entry_id),
         )
 
     async def async_turn_on(self, **kwargs: Any) -> None:
@@ -223,12 +240,18 @@ class CategoryServiceSwitch(SwitchEntity):
         self.coordinator.service_mode[self.category] = True
         self._attr_is_on = True
         self.async_write_ha_state()
+        await _async_save_category_setting(
+            self.coordinator, self._entry_id, self.category, "service_mode", True
+        )
 
     async def async_turn_off(self, **kwargs: Any) -> None:
         """Turn the switch off."""
         self.coordinator.service_mode[self.category] = False
         self._attr_is_on = False
         self.async_write_ha_state()
+        await _async_save_category_setting(
+            self.coordinator, self._entry_id, self.category, "service_mode", False
+        )
 
 
 class HazardChannelSwitch(SwitchEntity):
@@ -242,7 +265,6 @@ class HazardChannelSwitch(SwitchEntity):
         entry_id: str,
         category: str,
         channel: str,
-        hub_device_id: str | None = None,
     ) -> None:
         """Initialize the switch."""
         self.coordinator = coordinator
@@ -270,7 +292,7 @@ class HazardChannelSwitch(SwitchEntity):
             identifiers={(DOMAIN, f"{self._entry_id}_{self.category}")},
             name=f"Module: {self.category.capitalize()}",
             manufacturer="Safety Systems",
-            via_device_id=hub_device_id,
+            via_device=(DOMAIN, self._entry_id),
         )
 
     async def async_turn_on(self, **kwargs: Any) -> None:
@@ -280,6 +302,10 @@ class HazardChannelSwitch(SwitchEntity):
         self.coordinator.channels[self.category][self.channel] = True
         self._attr_is_on = True
         self.async_write_ha_state()
+        key = "notify_lights_enabled" if self.channel == "light" else f"notify_{self.channel}"
+        await _async_save_category_setting(
+            self.coordinator, self._entry_id, self.category, key, True
+        )
 
     async def async_turn_off(self, **kwargs: Any) -> None:
         """Turn the switch off."""
@@ -288,3 +314,7 @@ class HazardChannelSwitch(SwitchEntity):
         self.coordinator.channels[self.category][self.channel] = False
         self._attr_is_on = False
         self.async_write_ha_state()
+        key = "notify_lights_enabled" if self.channel == "light" else f"notify_{self.channel}"
+        await _async_save_category_setting(
+            self.coordinator, self._entry_id, self.category, key, False
+        )

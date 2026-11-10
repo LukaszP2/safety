@@ -115,11 +115,7 @@ export class AnalyticsPredictionsCard extends HazardBase {
   _getTemperatureRisks() {
 
     const risks = [];
-
-    const statusEntity = Object.values(this.hass.states)
-      .find(e => e.attributes.unique_key === 'status');
-
-    const config = statusEntity?.attributes?.category_config?.temperature || {};
+    const config = this.safetyConfig?.temperature || {};
     const monitoredEntities = config.sensors || [];
 
     monitoredEntities.forEach(entityId => {
@@ -165,10 +161,7 @@ export class AnalyticsPredictionsCard extends HazardBase {
 
   _getSafeMonitoredEntities(activeRiskEntities) {
 
-    const statusEntity = Object.values(this.hass.states)
-      .find(e => e.attributes.unique_key === 'status');
-
-    const config = statusEntity?.attributes?.category_config || {};
+    const config = this.safetyConfig || {};
 
     const entitiesSet = new Set();
 

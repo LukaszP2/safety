@@ -1,11 +1,21 @@
 import { LitElement } from 'lit';
 import { setLanguage, t } from './i18n.js';
+import {
+  fetchSafetyConfig,
+  getSafetyConfig,
+  subscribeSafetyConfig,
+} from './utils/safety-config.js';
 
 export class HazardBase extends LitElement {
 
   static properties = {
     hass: { type: Object },
+    _safetyConfig: { state: true },
   };
+
+  get safetyConfig() {
+    return this._safetyConfig || getSafetyConfig();
+  }
 
   // Safety i18n
   tt(key, params = {}) {
@@ -97,6 +107,15 @@ export class HazardBase extends LitElement {
       'language-loaded',
       this._onLangLoaded
     );
+
+    this._unsubConfig = subscribeSafetyConfig((cfg) => {
+      this._safetyConfig = cfg;
+      this.requestUpdate();
+    });
+
+    if (this.hass) {
+      fetchSafetyConfig(this.hass);
+    }
   }
 
   disconnectedCallback() {
@@ -106,16 +125,27 @@ export class HazardBase extends LitElement {
       'language-loaded',
       this._onLangLoaded
     );
+
+    if (this._unsubConfig) {
+      this._unsubConfig();
+      this._unsubConfig = null;
+    }
   }
 
   updated(changedProperties) {
 
     super.updated(changedProperties);
 
-    if (changedProperties.has('hass') && this.hass?.language) {
+    if (changedProperties.has('hass')) {
 
-      // synchronizacja języka i18n z HA
-      setLanguage(this.hass.language);
+      if (this.hass?.language) {
+        // synchronizacja języka i18n z HA
+        setLanguage(this.hass.language);
+      }
+
+      if (this.hass) {
+        fetchSafetyConfig(this.hass);
+      }
 
     }
   }

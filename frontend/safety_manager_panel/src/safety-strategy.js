@@ -20,7 +20,7 @@ class SafetyDashboardStrategy extends HTMLElement {
                type: "entities",
                title: "Wykryte Zagrożenia",
                show_header_toggle: false,
-               // Tutaj w przyszłości możemy pętlą mapować encje z Twojego coordinator.category_config!
+               // Tutaj w przyszłości możemy pętlą mapować encje z konfiguracji WebSocket!
                entities: [
                  "sensor.safety_central_hub", // Główny sensor z Twojego Pythona
                ]

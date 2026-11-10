@@ -15,7 +15,7 @@ select = [
     "UP",   # pyupgrade
     "N",    # pep8-naming
 ]
-ignore = ["E501", "N818", "SIM102"]
+ignore = ["E501", "N818", "SIM102", "BLE001", "DTZ007", "RUF010"]
 
 [tool.ruff.lint.isort]
 # Automatyczne grupowanie importów (standard HA)

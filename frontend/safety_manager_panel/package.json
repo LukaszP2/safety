@@ -5,7 +5,7 @@
   "description": "",
   "main": "vite.config.js",
   "scripts": {
-    "build": "vite build",
+    "build": "vite build && cp -r ../www/* ../../custom_components/safety/www/",
     "dev": "vite",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

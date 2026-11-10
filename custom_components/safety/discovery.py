@@ -138,17 +138,14 @@ def perform_auto_discovery(
         domain, entity_id = state.domain, state.entity_id
         if domain in ("switch", "valve", "water_heater", "cover", "button"):
             comb = (
-                f"{entity_id} {str(state.attributes.get('friendly_name', ''))}".lower()
+                f"{entity_id} {state.attributes.get('friendly_name', '')!s}".lower()
             )
-            if any(w in comb for w in ["water", "woda", "zawor", "valve"]):
-                if entity_id not in cat_cfg["water"]["actuators"]:
-                    cat_cfg["water"]["actuators"].append(entity_id)
-            if any(w in comb for w in ["gas", "gaz"]):
-                if entity_id not in cat_cfg["gas"]["actuators"]:
-                    cat_cfg["gas"]["actuators"].append(entity_id)
-            if any(w in comb for w in ["power", "zasil", "socket", "gniazd"]):
-                if entity_id not in cat_cfg["power"]["actuators"]:
-                    cat_cfg["power"]["actuators"].append(entity_id)
+            if any(w in comb for w in ["water", "woda", "zawor", "valve"]) and entity_id not in cat_cfg["water"]["actuators"]:
+                cat_cfg["water"]["actuators"].append(entity_id)
+            if any(w in comb for w in ["gas", "gaz"]) and entity_id not in cat_cfg["gas"]["actuators"]:
+                cat_cfg["gas"]["actuators"].append(entity_id)
+            if any(w in comb for w in ["power", "zasil", "socket", "gniazd"]) and entity_id not in cat_cfg["power"]["actuators"]:
+                cat_cfg["power"]["actuators"].append(entity_id)
         if domain in ("binary_sensor", "sensor"):
             dcl = state.attributes.get("device_class")
             if not dcl:
@@ -156,20 +153,15 @@ def perform_auto_discovery(
                 dcl = (
                     entry.device_class or entry.original_device_class if entry else None
                 )
-            if dcl in ("moisture", "water", "leak", "flood"):
-                if entity_id not in cat_cfg["water"]["sensors"]:
-                    cat_cfg["water"]["sensors"].append(entity_id)
-            elif dcl in ("smoke", "fire", "heat"):
-                if entity_id not in cat_cfg["fire"]["sensors"]:
-                    cat_cfg["fire"]["sensors"].append(entity_id)
-            elif dcl in ("gas", "volatile_organic_compounds"):
-                if entity_id not in cat_cfg["gas"]["sensors"]:
-                    cat_cfg["gas"]["sensors"].append(entity_id)
-            elif dcl == "temperature":
-                if entity_id not in cat_cfg["temperature"]["sensors"]:
-                    cat_cfg["temperature"]["sensors"].append(entity_id)
-            elif dcl in ("power", "energy", "current", "voltage"):
-                if entity_id not in cat_cfg["power"]["sensors"]:
-                    cat_cfg["power"]["sensors"].append(entity_id)
+            if dcl in ("moisture", "water", "leak", "flood") and entity_id not in cat_cfg["water"]["sensors"]:
+                cat_cfg["water"]["sensors"].append(entity_id)
+            elif dcl in ("smoke", "fire", "heat") and entity_id not in cat_cfg["fire"]["sensors"]:
+                cat_cfg["fire"]["sensors"].append(entity_id)
+            elif dcl in ("gas", "volatile_organic_compounds") and entity_id not in cat_cfg["gas"]["sensors"]:
+                cat_cfg["gas"]["sensors"].append(entity_id)
+            elif dcl == "temperature" and entity_id not in cat_cfg["temperature"]["sensors"]:
+                cat_cfg["temperature"]["sensors"].append(entity_id)
+            elif dcl in ("power", "energy", "current", "voltage") and entity_id not in cat_cfg["power"]["sensors"]:
+                cat_cfg["power"]["sensors"].append(entity_id)
 
     return cat_cfg

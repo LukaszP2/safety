@@ -1,11 +1,10 @@
+import { getSafetyConfig } from "./safety-config.js";
+
 export function generateRecommendations(hass) {
 
-  const statusEntity = Object.values(hass.states)
-    .find(e => e.attributes?.unique_key === "status");
+  if (!hass) return [];
 
-  if (!statusEntity) return [];
-
-  const config = statusEntity.attributes?.category_config || {};
+  const config = getSafetyConfig() || {};
   const recos = [];
 
   const map = {

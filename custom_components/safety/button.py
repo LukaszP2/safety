@@ -8,7 +8,6 @@ from typing import Any
 from homeassistant.components.button import ButtonEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
@@ -32,21 +31,16 @@ async def async_setup_entry(
     """
     coordinator = hass.data[DOMAIN][entry.entry_id]
 
-    # Pobieramy rzeczywiste ID urządzenia hub z rejestru (wymagane przez via_device_id)
-    device_reg = dr.async_get(hass)
-    hub = device_reg.async_get_device(identifiers={(DOMAIN, entry.entry_id)})
-    hub_device_id = hub.id if hub else None
-
     buttons = []
 
     for cat in HAZARD_CATEGORIES:
         buttons.append(
-            TestButton(coordinator, entry.entry_id, cat, False, hub_device_id)
+            TestButton(coordinator, entry.entry_id, cat, False)
         )
         buttons.append(
-            TestButton(coordinator, entry.entry_id, cat, True, hub_device_id)
+            TestButton(coordinator, entry.entry_id, cat, True)
         )
-        buttons.append(DismissButton(coordinator, entry.entry_id, cat, hub_device_id))
+        buttons.append(DismissButton(coordinator, entry.entry_id, cat))
 
     async_add_entities(buttons)
 
@@ -54,6 +48,7 @@ async def async_setup_entry(
 class TestButton(ButtonEntity):
     """Button to trigger test alerts."""
 
+    __test__ = False
     _attr_has_entity_name = True
     _attr_entity_category = EntityCategory.CONFIG
 
@@ -63,7 +58,6 @@ class TestButton(ButtonEntity):
         entry_id: str,
         category: str,
         with_action: bool,
-        hub_device_id: str | None = None,
     ) -> None:
         """Initialize the button."""
         self.coordinator = coordinator
@@ -80,7 +74,7 @@ class TestButton(ButtonEntity):
             identifiers={(DOMAIN, f"{entry_id}_{category}")},
             name=f"Module: {category.capitalize()}",
             manufacturer="Safety Systems",
-            via_device_id=hub_device_id,
+            via_device=(DOMAIN, entry_id),
         )
 
     async def async_press(self) -> None:
@@ -107,7 +101,6 @@ class DismissButton(ButtonEntity):
         coordinator: Any,
         entry_id: str,
         category: str,
-        hub_device_id: str | None = None,
     ) -> None:
         """Initialize the button."""
         self.coordinator = coordinator
@@ -119,7 +112,7 @@ class DismissButton(ButtonEntity):
             identifiers={(DOMAIN, f"{entry_id}_{category}")},
             name=f"Module: {category.capitalize()}",
             manufacturer="Safety Systems",
-            via_device_id=hub_device_id,
+            via_device=(DOMAIN, entry_id),
         )
 
     async def async_press(self) -> None:

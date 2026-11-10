@@ -1,5 +1,6 @@
 import { LitElement, html, css } from 'lit';
 import { t } from './i18n.js';
+import { fetchSafetyConfig } from './utils/safety-config.js';
 import './components/tab-summary.js';
 import './components/tab-hazards.js';
 import './components/tab-status.js';
@@ -23,11 +24,17 @@ class SafetyPanel extends LitElement {
   connectedCallback() {
     super.connectedCallback();
     this._lang = this.hass?.locale?.language;
+    if (this.hass) {
+      fetchSafetyConfig(this.hass);
+    }
   }
   
   updated(changedProperties) {
     if (changedProperties.has('hass')) {
       this._lang = this.hass?.locale?.language;
+      if (this.hass) {
+        fetchSafetyConfig(this.hass);
+      }
     }
   }
   

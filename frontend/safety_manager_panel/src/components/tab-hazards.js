@@ -1,5 +1,11 @@
 import { html, css } from 'lit';
 import { HazardBase } from '../hazard-base.js';
+import {
+  fetchSafetyConfig,
+  getSafetyConfig,
+  setSafetyConfig,
+  subscribeSafetyConfig,
+} from '../utils/safety-config.js';
 
 import './matrix-table.js';
 import './entity-list-card.js';
@@ -27,6 +33,31 @@ constructor() {
     { id: 'temperature', icon: 'mdi:thermometer' },
     { id: 'power', icon: 'mdi:power-plug' }
   ];
+}
+
+connectedCallback() {
+  super.connectedCallback();
+  this._unsubLocalConfig = subscribeSafetyConfig((cfg) => {
+    if (cfg && Object.keys(cfg).length > 0) {
+      this._localConfig = structuredClone(cfg);
+      this.requestUpdate();
+    }
+  });
+  const current = getSafetyConfig();
+  if (current && Object.keys(current).length > 0) {
+    this._localConfig = structuredClone(current);
+  }
+  if (this.hass) {
+    fetchSafetyConfig(this.hass);
+  }
+}
+
+disconnectedCallback() {
+  super.disconnectedCallback();
+  if (this._unsubLocalConfig) {
+    this._unsubLocalConfig();
+    this._unsubLocalConfig = null;
+  }
 }
 
 static styles = css`
@@ -107,25 +138,6 @@ border:1px solid var(--divider-color);
 .btn-dismiss{--mdc-theme-primary:var(--success-color)}
 `;
 
-willUpdate(changed){
-
-if(changed.has("hass")){
-
-const statusId=this._getEntity("sensor","status");
-
-if(!statusId) return;
-
-const cfg=this.hass.states[statusId]?.attributes?.category_config;
-
-// Zawsze aktualizuj config - pozwala na szybkie odświeżenie stanu
-if(cfg){
-this._localConfig=structuredClone(cfg);
-}
-
-}
-
-}
-
 _getEntity(domain,uniqueKey){
 
 if(!this.hass) return null;
@@ -137,13 +149,18 @@ return id.startsWith(`${domain}.`) && attrs.unique_key===uniqueKey;
 
 }
 
-_updateSetting(cat,key,value){
+async _updateSetting(cat,key,value){
 
-this.hass.callService("safety","update_settings",{
-category:cat,
-key:key,
-value:value
-});
+try {
+  await this.hass.callService("safety","update_settings",{
+    category:cat,
+    key:key,
+    value:value
+  });
+  await fetchSafetyConfig(this.hass, true);
+} catch (err) {
+  console.error("Safety Error in updateSetting:", err);
+}
 
 }
 
@@ -159,6 +176,7 @@ this._localConfig = {
   }
 };
 
+setSafetyConfig(this._localConfig);
 this.requestUpdate();
 
 /* zapis backend */
@@ -191,6 +209,7 @@ this._localConfig={
 }
 };
 
+setSafetyConfig(this._localConfig);
 this.requestUpdate();
 
 this._updateSetting(cat,key,updated);
@@ -220,6 +239,7 @@ this._localConfig={
 }
 };
 
+setSafetyConfig(this._localConfig);
 this.requestUpdate();
 
 this._updateSetting(cat,key,updated);

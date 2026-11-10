@@ -3,7 +3,7 @@
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg?style=for-the-badge)](https://github.com/hacs/integration)
 [![version](https://img.shields.io/badge/HA-2026.3+-blue.svg?style=for-the-badge)](https://www.home-assistant.io)
 [![license](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
-[![buy_me_a_coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-Donate-yellow.svg?style=for-the-badge)](https://www.buymeacoffee.com/yourusername)
+[![buy_me_a_coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-Donate-yellow.svg?style=for-the-badge)](https://www.buymeacoffee.com/LukaszP2)
 
 
 [![Otwórz repozytorium w HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=LukaszP2&repository=safety&category=integration)
@@ -15,13 +15,13 @@
 
 ## ✨ Key Features
 
-* **📊 Smart Status Tile:** A dynamic summary of the 4 main risks: 🔥 **Fire**, 💧 **Water**, ⛽ **Gas**, and ☠ **CO**. The system automatically highlights active alerts and sensor counts.
-* **🏢 Native Floor Support:** Full integration with Home Assistant's Floor system. Your rooms are automatically grouped and sorted by floor level.
-* **🚨 Alert Prioritization:** Rooms with active hazards are automatically "floated" to the top of the dashboard for immediate visibility.
-* **🧟 "Zombie" Detection:** Advanced communication monitoring. Detects devices that haven't updated their state in over 24 hours—crucial for maintaining Zigbee/Z-Wave stability.
-* **🪫 Battery Monitoring:** A dedicated section for low-power devices (<25%), sorted by criticality.
-* **🔧 Service Mode:** Temporarily suspend monitoring during maintenance or battery replacement to prevent false alarms.
-* **🧪 Diagnostics Provider:** Built-in secure (anonymized) diagnostics for easier troubleshooting and bug reporting.
+* **📊 Smart Status Tile:** A dynamic summary of the 5 main hazard categories: 🔥 **Fire**, 💧 **Water**, ⛽ **Gas**, 🌡️ **Temperature**, and ⚡ **Power**.
+* **🏢 Native Floor & Area Support:** Dashboard visual grouping by floors and rooms based on Home Assistant entity areas.
+* **🚨 Real-Time Hazard Alerting:** Automatic actuator shutdown (e.g. water valves, gas shutoffs, ventilation, covers) and multi-channel notifications (Push, TTS, sirens, emergency lighting).
+* **🧟 Communication Health Monitoring:** Dashboard communication monitoring identifies devices that have not reported updates in over 24 hours.
+* **🪫 Low Battery Diagnostics:** Overview of battery-powered hazard detectors (<25% charge) sorted by criticality.
+* **🔧 Service Mode:** Global or category-level service mode to suspend alarms during maintenance or sensor testing without false alerts.
+* **🧪 Diagnostics Provider:** Built-in anonymized diagnostics export for safe troubleshooting.
 
 ## 📸 Dashboard Preview
 
@@ -66,32 +66,33 @@ Po zainstalowaniu i ponownym uruchomieniu Home Assistant, kliknij poniższy przy
 If you encounter an issue:
 1. Go to the Safety Hub integration settings.
 2. Click **Download Diagnostics**.
-3. Attach the anonymized JSON file to your [GitHub Issue](https://github.com/yourusername/safety/issues).
+3. Attach the anonymized JSON file to your [GitHub Issue](https://github.com/LukaszP2/safety/issues).
 
 ## 🛠️ Development
 
-Built for Home Assistant 2026.3+:
-* **Backend:** Python 3.13+ with strict typing.
+Built for Home Assistant 2026.1+:
+* **Backend:** Python 3.12+ with typing.
 * **Frontend:** LitElement / Native HA Components.
-* **CI/CD:** GitHub Actions with `hassfest` and `hacs/action` validation.
+* **CI/CD:** GitHub Actions with `ruff`, `pytest`, and `hacs/action` validation.
 
 ---
 
 ### 📝 Example Automation
 
-Safety Hub provides a central `sensor.safety_hub_status` entity. Use it for critical notifications:
+Safety Hub provides a central `sensor.safety_status` entity (`safe`, `alarm`, `service_mode`). Use it for critical notifications:
 
 ```yaml
 alias: "Safety: Critical Alert"
 trigger:
   - platform: state
-    entity_id: sensor.safety_hub_status
-    to: "Fire"
+    entity_id: sensor.safety_status
+    to: "alarm"
 action:
-  - service: notify.all_devices
+  - service: notify.notify
     data:
-      title: "🚨 FIRE HAZARD DETECTED"
-      message: "Smoke detected in: {{ state_attr('sensor.safety_hub_status', 'active_areas') }}"
+      title: "🚨 SAFETY HAZARD DETECTED"
+      message: "Active hazard alerts: {{ state_attr('sensor.safety_status', 'active_alerts') | join(', ') }}"
       data:
         push:
           sound: "critical_alert.wav"
+```

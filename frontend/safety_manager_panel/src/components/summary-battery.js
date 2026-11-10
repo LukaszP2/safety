@@ -81,19 +81,16 @@ return id ? this.hass.states[id] : null;
 }
 
 _getConfiguredSensors(){
+  const config = this.safetyConfig || {};
+  const set = new Set();
 
-const main = this._getMainSensor();
-if(!main) return [];
+  Object.values(config).forEach(cat => {
+    if (cat && typeof cat === 'object') {
+      cat.sensors?.forEach(e => set.add(e));
+    }
+  });
 
-const config = main.attributes.category_config || {};
-const set = new Set();
-
-Object.values(config).forEach(cat => {
-cat.sensors?.forEach(e => set.add(e));
-});
-
-return [...set];
-
+  return [...set];
 }
 
 _getLowBattery(){

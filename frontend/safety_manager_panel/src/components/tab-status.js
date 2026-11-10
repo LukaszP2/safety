@@ -135,22 +135,15 @@ export class TabStatus extends LitElement {
   `;
 
   _getMonitoredEntities() {
-
-    const statusId = Object.keys(this.hass.states)
-      .find(id => id.startsWith('sensor.') &&
-      this.hass.states[id].attributes?.unique_key === 'status');
-
-    if (!statusId) return [];
-
-    const config = this.hass.states[statusId].attributes.category_config || {};
+    const config = this.safetyConfig || {};
     const entities = new Set();
 
     Object.values(config).forEach(cat => {
-
-      if (cat.sensors) cat.sensors.forEach(e => entities.add(e));
-      if (cat.actuators) cat.actuators.forEach(e => entities.add(e));
-      if (cat.sirens) cat.sirens.forEach(e => entities.add(e));
-
+      if (cat && typeof cat === 'object') {
+        if (cat.sensors) cat.sensors.forEach(e => entities.add(e));
+        if (cat.actuators) cat.actuators.forEach(e => entities.add(e));
+        if (cat.sirens) cat.sirens.forEach(e => entities.add(e));
+      }
     });
 
     return Array.from(entities);

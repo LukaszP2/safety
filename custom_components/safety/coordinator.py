@@ -12,6 +12,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import STATE_UNAVAILABLE, STATE_UNKNOWN
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.event import async_track_time_interval
+from homeassistant.util import dt as dt_util
 
 from .const import (
     ALARM_MESSAGES,
@@ -95,13 +96,15 @@ class SafetyCoordinator:
         if not glob.get("use_home_modes", False):
             return "home"
 
-        now = datetime.datetime.now().time()
+        now = dt_util.now().time()
         start_str = glob.get("night_start", "22:00")
         end_str = glob.get("night_end", "06:00")
 
         try:
-            start_t = datetime.datetime.strptime(start_str, "%H:%M").time()
-            end_t = datetime.datetime.strptime(end_str, "%H:%M").time()
+            sh, sm = [int(p) for p in start_str.split(":", 1)]
+            eh, em = [int(p) for p in end_str.split(":", 1)]
+            start_t = datetime.time(sh, sm)
+            end_t = datetime.time(eh, em)
             if start_t <= end_t:
                 is_night = start_t <= now <= end_t
             else:
@@ -178,7 +181,21 @@ class SafetyCoordinator:
             ):
                 try:
                     domain = act.split(".")[0]
-                    service = "turn_on" if domain in ["siren", "fan"] else "turn_off"
+                    if domain in ["siren", "fan"]:
+                        service = "turn_on"
+                    elif domain == "valve":
+                        service = "close_valve"
+                    elif domain == "cover":
+                        service = "close_cover"
+                    elif domain == "lock":
+                        service = "lock"
+                    elif domain == "climate":
+                        service = "turn_off"
+                    elif domain == "button":
+                        service = "press"
+                    else:
+                        service = "turn_off"
+
                     try:
                         await asyncio.wait_for(
                             self.hass.services.async_call(
@@ -188,7 +205,7 @@ class SafetyCoordinator:
                         )
                     except TimeoutError:
                         _LOGGER.error("Timeout controlling actuator %s", act)
-                except Exception as err:
+                except Exception as err:  # noqa: BLE001
                     _LOGGER.error("Error controlling actuator %s: %s", act, err)
 
             actions = cfg.get("actions", [])
@@ -197,16 +214,31 @@ class SafetyCoordinator:
             ):
                 try:
                     domain = act.split(".")[0]
+                    if domain == "valve":
+                        service = "open_valve"
+                    elif domain == "cover":
+                        service = "open_cover"
+                    elif domain == "lock":
+                        service = "unlock"
+                    elif domain == "climate":
+                        service = "turn_off"
+                    elif domain == "button":
+                        service = "press"
+                    elif domain == "script":
+                        service = act.split(".")[1]
+                    else:
+                        service = "turn_on"
+
                     try:
                         await asyncio.wait_for(
                             self.hass.services.async_call(
-                                domain, "turn_on", {"entity_id": act}
+                                domain, service, {"entity_id": act}
                             ),
                             timeout=REQUEST_TIMEOUT,
                         )
                     except TimeoutError:
                         _LOGGER.error("Timeout executing action %s", act)
-                except Exception as err:
+                except Exception as err:  # noqa: BLE001
                     _LOGGER.error("Error executing action %s: %s", act, err)
 
         lang = getattr(self.hass.config, "language", "en") or "en"
@@ -256,50 +288,87 @@ class SafetyCoordinator:
                 if glob.get("light_effect", True):
                     payload["flash"] = "long"
 
-                await self.hass.services.async_call("light", "turn_on", payload)
-            except Exception as err:
+                await asyncio.wait_for(
+                    self.hass.services.async_call("light", "turn_on", payload),
+                    timeout=REQUEST_TIMEOUT,
+                )
+            except TimeoutError:
+                _LOGGER.error("Timeout controlling light %s", light)
+            except Exception as err:  # noqa: BLE001
                 _LOGGER.error("Error controlling light %s: %s", light, err)
 
         sirens = cfg.get("notify_sirens", [])
         for siren in sirens if isinstance(sirens, list) else [sirens] if sirens else []:
             try:
-                await self.hass.services.async_call(
-                    "siren", "turn_on", {"entity_id": siren}
+                await asyncio.wait_for(
+                    self.hass.services.async_call(
+                        "siren", "turn_on", {"entity_id": siren}
+                    ),
+                    timeout=REQUEST_TIMEOUT,
                 )
-            except Exception as err:
+            except TimeoutError:
+                _LOGGER.error("Timeout controlling siren %s", siren)
+            except Exception as err:  # noqa: BLE001
                 _LOGGER.error("Error controlling siren %s: %s", siren, err)
 
         pushes = cfg.get("notify_push", [])
         for push in pushes if isinstance(pushes, list) else [pushes] if pushes else []:
             try:
                 service = push.split(".")[1] if "." in push else push
-                await self.hass.services.async_call(
-                    "notify",
-                    service,
-                    {"title": title, "message": msg, "data": push_data},
+                await asyncio.wait_for(
+                    self.hass.services.async_call(
+                        "notify",
+                        service,
+                        {"title": title, "message": msg, "data": push_data},
+                    ),
+                    timeout=REQUEST_TIMEOUT,
                 )
-            except Exception as err:
+            except TimeoutError:
+                _LOGGER.error("Timeout sending push notification via %s", push)
+            except Exception as err:  # noqa: BLE001
                 _LOGGER.error("Error sending push notification via %s: %s", push, err)
 
         ttses = cfg.get("notify_tts", [])
         if ttses and self.is_anyone_home():
+            tts_engines = [s.entity_id for s in self.hass.states.async_all("tts")]
+            target_engine = glob.get("tts_engine") or (tts_engines[0] if tts_engines else None)
             for tts in ttses if isinstance(ttses, list) else [ttses] if ttses else []:
                 try:
                     vol = glob.get("tts_volume", 80) / 100.0
-                    await self.hass.services.async_call(
-                        "media_player",
-                        "volume_set",
-                        {"entity_id": tts, "volume_level": vol},
+                    await asyncio.wait_for(
+                        self.hass.services.async_call(
+                            "media_player",
+                            "volume_set",
+                            {"entity_id": tts, "volume_level": vol},
+                        ),
+                        timeout=REQUEST_TIMEOUT,
                     )
-                    await self.hass.services.async_call(
-                        "tts",
-                        "speak",
-                        {
-                            "media_player_entity_id": tts,
-                            "message": f"Alert! {msg}",
-                        },
-                    )
-                except Exception as err:
+                    service_data = {
+                        "media_player_entity_id": tts,
+                        "message": f"Alert! {msg}",
+                    }
+                    if target_engine:
+                        await asyncio.wait_for(
+                            self.hass.services.async_call(
+                                "tts",
+                                "speak",
+                                service_data,
+                                target={"entity_id": target_engine},
+                            ),
+                            timeout=REQUEST_TIMEOUT,
+                        )
+                    else:
+                        await asyncio.wait_for(
+                            self.hass.services.async_call(
+                                "tts",
+                                "speak",
+                                service_data,
+                            ),
+                            timeout=REQUEST_TIMEOUT,
+                        )
+                except TimeoutError:
+                    _LOGGER.error("Timeout with TTS on %s", tts)
+                except Exception as err:  # noqa: BLE001
                     _LOGGER.error("Error with TTS on %s: %s", tts, err)
 
         # 5. Start repeat reminder loop for real alerts
@@ -308,11 +377,10 @@ class SafetyCoordinator:
             and glob.get("tts_repeat", False)
             and cat not in self._repeat_tasks
         ):
-            self._repeat_tasks[cat] = asyncio.create_task(
-                self._alert_repeat_loop(
-                    cat, title, msg, entity_id, cfg, glob, push_data
-                )
+            coro = self._alert_repeat_loop(
+                cat, title, msg, entity_id, cfg, glob, push_data
             )
+            self._repeat_tasks[cat] = self.hass.async_create_task(coro)
 
     async def _alert_repeat_loop(
         self,
@@ -326,15 +394,22 @@ class SafetyCoordinator:
     ) -> None:
         """Repeat alert notifications at intervals."""
         try:
-            interval = glob.get("tts_repeat_interval", self.repeat_interval.get(cat, 5))
+            raw_interval = glob.get("tts_repeat_interval", self.repeat_interval.get(cat, 5))
+            try:
+                interval = max(1, int(raw_interval))
+            except (TypeError, ValueError):
+                interval = 5
 
             while entity_id in self.active_hazards:
                 await asyncio.sleep(interval * 60)
 
                 state = self.hass.states.get(entity_id)
-                if state and state.state == "off":
-                    await self.dismiss_alert(cat)
-                    break
+                if state and state.state in ("off", "safe", "0"):
+                    if entity_id in self.active_hazards:
+                        del self.active_hazards[entity_id]
+                    if not any(c == cat for c in self.active_hazards.values()):
+                        await self.dismiss_alert(cat)
+                        break
 
                 # Repeat push notifications
                 pushes = cfg.get("notify_push", [])
@@ -343,40 +418,67 @@ class SafetyCoordinator:
                 ):
                     try:
                         service = push.split(".")[1] if "." in push else push
-                        await self.hass.services.async_call(
-                            "notify",
-                            service,
-                            {
-                                "title": f"🔄 Reminder: {title}",
-                                "message": msg,
-                                "data": push_data,
-                            },
+                        await asyncio.wait_for(
+                            self.hass.services.async_call(
+                                "notify",
+                                service,
+                                {
+                                    "title": f"🔄 Reminder: {title}",
+                                    "message": msg,
+                                    "data": push_data,
+                                },
+                            ),
+                            timeout=REQUEST_TIMEOUT,
                         )
-                    except Exception as err:
+                    except TimeoutError:
+                        _LOGGER.error("Timeout sending reminder via %s", push)
+                    except Exception as err:  # noqa: BLE001
                         _LOGGER.error("Error sending reminder via %s: %s", push, err)
 
                 # Repeat TTS
                 ttses = cfg.get("notify_tts", [])
                 if ttses and self.is_anyone_home():
+                    tts_engines = [s.entity_id for s in self.hass.states.async_all("tts")]
+                    target_engine = glob.get("tts_engine") or (tts_engines[0] if tts_engines else None)
                     for tts in (
                         ttses if isinstance(ttses, list) else [ttses] if ttses else []
                     ):
                         try:
                             vol = glob.get("tts_volume", 80) / 100.0
-                            await self.hass.services.async_call(
-                                "media_player",
-                                "volume_set",
-                                {"entity_id": tts, "volume_level": vol},
+                            await asyncio.wait_for(
+                                self.hass.services.async_call(
+                                    "media_player",
+                                    "volume_set",
+                                    {"entity_id": tts, "volume_level": vol},
+                                ),
+                                timeout=REQUEST_TIMEOUT,
                             )
-                            await self.hass.services.async_call(
-                                "tts",
-                                "speak",
-                                {
-                                    "media_player_entity_id": tts,
-                                    "message": f"Reminder: {msg}",
-                                },
-                            )
-                        except Exception as err:
+                            service_data = {
+                                "media_player_entity_id": tts,
+                                "message": f"Reminder: {msg}",
+                            }
+                            if target_engine:
+                                await asyncio.wait_for(
+                                    self.hass.services.async_call(
+                                        "tts",
+                                        "speak",
+                                        service_data,
+                                        target={"entity_id": target_engine},
+                                    ),
+                                    timeout=REQUEST_TIMEOUT,
+                                )
+                            else:
+                                await asyncio.wait_for(
+                                    self.hass.services.async_call(
+                                        "tts",
+                                        "speak",
+                                        service_data,
+                                    ),
+                                    timeout=REQUEST_TIMEOUT,
+                                )
+                        except TimeoutError:
+                            _LOGGER.error("Timeout with TTS reminder on %s", tts)
+                        except Exception as err:  # noqa: BLE001
                             _LOGGER.error("Error with TTS reminder on %s: %s", tts, err)
 
         except asyncio.CancelledError:
@@ -397,22 +499,27 @@ class SafetyCoordinator:
             self.sensor.update_internal_state()
 
     # =========================================================
-    # --- SILNIK PREDYKCJI AI (W TLE) ---
+    # --- SILNIK WCZESNEGO OSTRZEGANIA (W TLE) ---
     # =========================================================
 
     def start_monitoring(self):
-        """Uruchamia proces analityczny AI co 5 minut."""
+        """Uruchamia proces analityczny wczesnego ostrzegania co 5 minut."""
         if self._unsub_predictions is None:
-            _LOGGER.debug("Uruchamianie silnika predykcji AI (interwal 5 minut)")
+            _LOGGER.debug("Uruchamianie silnika wczesnego ostrzegania (interwal 5 minut)")
             self._unsub_predictions = async_track_time_interval(
                 self.hass, self._async_check_predictions, timedelta(minutes=5)
             )
 
     def stop_monitoring(self):
-        """Zatrzymuje proces analityczny."""
+        """Zatrzymuje proces analityczny i zadania w tle."""
         if self._unsub_predictions is not None:
             self._unsub_predictions()
             self._unsub_predictions = None
+
+        for _cat, task in list(self._repeat_tasks.items()):
+            if not task.done():
+                task.cancel()
+        self._repeat_tasks.clear()
 
     async def _async_check_predictions(self, now=None):
         """Sprawdza stan encji predykcyjnych pod katem zagrozen dlugoterminowych."""
@@ -470,7 +577,7 @@ class SafetyCoordinator:
             return
 
         self.active_predictions[entity_id] = risk_type
-        message = f"🧠 AI Safety: {reason} wykryte na czujniku {name}!"
+        message = f"🛡️ Wczesne Ostrzeżenie: {reason} wykryte na czujniku {name}!"
         _LOGGER.warning(message)
 
         cat_cfg = (
@@ -486,10 +593,10 @@ class SafetyCoordinator:
                     domain,
                     service,
                     {
-                        "title": "🧠 Predykcja Zagrozen AI",
+                        "title": "🛡️ Wczesne Ostrzeżenie",
                         "message": message,
                         "data": {"push": {"interruption-level": "time-sensitive"}},
                     },
                 )
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001
                 _LOGGER.error("Blad powiadomienia PUSH z predykcji: %s", e)

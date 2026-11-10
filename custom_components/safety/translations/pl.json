@@ -2,8 +2,11 @@
   "config": {
     "step": {
       "user": {
-        "title": "System Bezpieczeństwa",
-        "description": "Skonfiguruj System Bezpieczeństwa"
+        "title": "Safety Hub",
+        "description": "Skonfiguruj system monitorowania zagrożeń Safety Hub",
+        "data": {
+          "auto_config": "Automatycznie wykryj i skonfiguruj sensory oraz aktuatory"
+        }
       }
     },
     "abort": {
@@ -82,6 +85,54 @@
     "text": {
       "custom_msg": {
         "name": "Wiadomość Niestandardowa"
+      }
+    }
+  },
+  "services": {
+    "update_settings": {
+      "name": "Aktualizuj ustawienia",
+      "description": "Aktualizuje ustawienia konfiguracyjne Safety Hub.",
+      "fields": {
+        "category": {
+          "name": "Kategoria",
+          "description": "Kategoria zagrożenia (np. water, fire, gas, temperature, power, global)."
+        },
+        "key": {
+          "name": "Klucz",
+          "description": "Klucz ustawienia (np. sensors, actuators, auto_config)."
+        },
+        "value": {
+          "name": "Wartość",
+          "description": "Nowa wartość dla wybranego klucza ustawienia."
+        }
+      }
+    },
+    "toggle_service_mode": {
+      "name": "Przełącz tryb serwisowy",
+      "description": "Przełącza globalny tryb serwisowy w celu wstrzymania alertów podczas prac konserwacyjnych."
+    },
+    "test_alert": {
+      "name": "Test alertu",
+      "description": "Wywołuje symulowany alert zagrożenia w celu przetestowania powiadomień i kanałów akcji.",
+      "fields": {
+        "category": {
+          "name": "Kategoria",
+          "description": "Kategoria zagrożenia do przetestowania (water, fire, gas, temperature, power)."
+        },
+        "execute_actions": {
+          "name": "Wykonaj akcje",
+          "description": "Czy podczas testu wykonać automatyczne akcje fizyczne (np. zawory/przełączniki)."
+        }
+      }
+    },
+    "dismiss_alert": {
+      "name": "Odwołaj alert",
+      "description": "Odwołuje aktywne alerty dla określonej kategorii zagrożenia i anuluje pętle przypomnień.",
+      "fields": {
+        "category": {
+          "name": "Kategoria",
+          "description": "Kategoria zagrożenia do odwołania (water, fire, gas, temperature, power)."
+        }
       }
     }
   }

@@ -8,7 +8,6 @@ from typing import Any
 from homeassistant.components.text import TextEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
@@ -26,13 +25,8 @@ async def async_setup_entry(
     """Set up text entry."""
     coordinator = hass.data[DOMAIN][entry.entry_id]
 
-    # Pobieramy rzeczywiste ID urządzenia hub z rejestru (wymagane przez via_device_id)
-    device_reg = dr.async_get(hass)
-    hub = device_reg.async_get_device(identifiers={(DOMAIN, entry.entry_id)})
-    hub_device_id = hub.id if hub else None
-
     texts = [
-        CustomMessageText(coordinator, entry.entry_id, cat, hub_device_id)
+        CustomMessageText(coordinator, entry.entry_id, cat)
         for cat in HAZARD_CATEGORIES
     ]
     async_add_entities(texts)
@@ -52,20 +46,21 @@ class CustomMessageText(TextEntity):
         coordinator: Any,
         entry_id: str,
         category: str,
-        hub_device_id: str | None = None,
     ) -> None:
         """Initialize the text entity."""
         self.coordinator = coordinator
         self.category = category
         self._entry_id = entry_id
         self._attr_unique_id = f"{entry_id}_{category}_custom_msg"
-        self._attr_native_value = ""
+        self._attr_native_value = (
+            self.coordinator.category_config.get(category, {}).get("custom_msg", "")
+        )
 
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, f"{entry_id}_{category}")},
             name=f"Module: {category.capitalize()}",
             manufacturer="Safety Systems",
-            via_device_id=hub_device_id,
+            via_device=(DOMAIN, entry_id),
         )
 
     async def async_set_value(self, value: str) -> None:
@@ -77,3 +72,12 @@ class CustomMessageText(TextEntity):
 
         self.coordinator.custom_messages[self.category] = value
         self.async_write_ha_state()
+
+        if self.category not in self.coordinator.category_config:
+            self.coordinator.category_config[self.category] = {}
+        self.coordinator.category_config[self.category]["custom_msg"] = value
+        entry = self.coordinator.hass.config_entries.async_get_entry(self._entry_id)
+        if entry:
+            new_options = dict(entry.options)
+            new_options["categories"] = self.coordinator.category_config
+            self.coordinator.hass.config_entries.async_update_entry(entry, options=new_options)

@@ -1,8 +1,7 @@
 {
-  "pythonVersion": "3.13",
+  "pythonVersion": "3.12",
   "pythonPlatform": "Linux",
   "typeCheckingMode": "basic",
   "reportMissingImports": "none",
   "reportMissingModuleSource": "none"
 }
-

@@ -2,8 +2,11 @@
   "config": {
     "step": {
       "user": {
-        "title": "Safety System",
-        "description": "Configure the Safety System"
+        "title": "Safety Hub",
+        "description": "Configure the Safety Hub hazard monitoring system",
+        "data": {
+          "auto_config": "Automatically configure hazards, sensors and devices"
+        }
       }
     },
     "abort": {
@@ -82,6 +85,54 @@
     "text": {
       "custom_msg": {
         "name": "Custom Message"
+      }
+    }
+  },
+  "services": {
+    "update_settings": {
+      "name": "Update settings",
+      "description": "Updates configuration settings for Safety Hub.",
+      "fields": {
+        "category": {
+          "name": "Category",
+          "description": "Hazard category (e.g. water, fire, gas, temperature, power, global)."
+        },
+        "key": {
+          "name": "Key",
+          "description": "Setting key (e.g. sensors, actuators, auto_config)."
+        },
+        "value": {
+          "name": "Value",
+          "description": "New value for the specified setting key."
+        }
+      }
+    },
+    "toggle_service_mode": {
+      "name": "Toggle service mode",
+      "description": "Toggles global service mode on or off to suppress alerts during maintenance."
+    },
+    "test_alert": {
+      "name": "Test alert",
+      "description": "Triggers a simulated hazard alert for testing notification and action channels.",
+      "fields": {
+        "category": {
+          "name": "Category",
+          "description": "Hazard category to test (water, fire, gas, temperature, power)."
+        },
+        "execute_actions": {
+          "name": "Execute actions",
+          "description": "Whether to execute automated physical actions (e.g. valves/switches) during the test."
+        }
+      }
+    },
+    "dismiss_alert": {
+      "name": "Dismiss alert",
+      "description": "Dismisses active alerts for a specified hazard category and cancels reminder loops.",
+      "fields": {
+        "category": {
+          "name": "Category",
+          "description": "Hazard category to dismiss (water, fire, gas, temperature, power)."
+        }
       }
     }
   }

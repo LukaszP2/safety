@@ -1,26 +1,55 @@
 update_settings:
-  name: "Aktualizuj ustawienia"
-  description: "Aktualizuje ustawienia dla integracji Bezpieczeństwo (Safety System)"
+  name: "Update settings"
+  description: "Updates configuration settings for Safety Hub."
   fields:
     category:
-      name: "Kategoria"
-      description: "Kategoria zagrożenia (np. water, smoke, global)"
+      name: "Category"
+      description: "Hazard category (e.g. water, fire, gas, temperature, power, global)."
       required: true
       selector:
         text:
     key:
-      name: "Klucz"
-      description: "Klucz ustawienia (np. sensors, auto_config)"
+      name: "Key"
+      description: "Setting key (e.g. sensors, actuators, auto_config)."
       required: true
       selector:
         text:
     value:
-      name: "Wartość"
-      description: "Nowa wartość dla podanego klucza"
+      name: "Value"
+      description: "New value for the specified setting key."
       required: true
       selector:
         object:
 
 toggle_service_mode:
-  name: "Przełącz tryb serwisowy"
-  description: "Przełącza globalny tryb serwisowy (wstrzymuje wszystkie alerty)"
+  name: "Toggle service mode"
+  description: "Toggles global service mode on or off to suppress alerts during maintenance."
+
+test_alert:
+  name: "Test alert"
+  description: "Triggers a simulated hazard alert for testing notification and action channels."
+  fields:
+    category:
+      name: "Category"
+      description: "Hazard category to test (water, fire, gas, temperature, power)."
+      required: true
+      selector:
+        text:
+    execute_actions:
+      name: "Execute actions"
+      description: "Whether to execute automated physical actions (e.g. valves/switches) during the test."
+      required: false
+      default: false
+      selector:
+        boolean:
+
+dismiss_alert:
+  name: "Dismiss alert"
+  description: "Dismisses active alerts for a specified hazard category and cancels reminder loops."
+  fields:
+    category:
+      name: "Category"
+      description: "Hazard category to dismiss (water, fire, gas, temperature, power)."
+      required: true
+      selector:
+        text:

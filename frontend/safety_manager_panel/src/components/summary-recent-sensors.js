@@ -56,11 +56,7 @@ margin-left:6px;
 `;
 
 _getSelectedEntities(){
-  // Pobierz konfigurację kategorii z sensora statusu
-  const statusId = this._getStatusSensorId();
-  if(!statusId) return [];
-  
-  const config = this.hass.states[statusId]?.attributes?.category_config;
+  const config = this.safetyConfig;
   if(!config) return [];
   
   const selectedEntities = [];

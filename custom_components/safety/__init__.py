@@ -4,14 +4,19 @@ from __future__ import annotations
 
 import copy
 import logging
+from typing import Any
 
+import voluptuous as vol
+from homeassistant.components import websocket_api
 from homeassistant.components.frontend import (
     async_register_built_in_panel,
     async_remove_panel,
 )
+from homeassistant.components.http import StaticPathConfig
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import device_registry as dr
+from homeassistant.helpers.event import async_track_state_change_event
 
 from .const import DOMAIN, HAZARD_CATEGORIES
 from .coordinator import SafetyCoordinator
@@ -20,6 +25,37 @@ from .discovery import perform_auto_discovery
 _LOGGER = logging.getLogger(__name__)
 
 PLATFORMS = ["sensor", "button", "switch", "number", "text"]
+
+
+@websocket_api.websocket_command(
+    {
+        vol.Required("type"): "safety/config",
+        vol.Optional("entry_id"): str,
+    }
+)
+@callback
+def ws_get_config(
+    hass: HomeAssistant,
+    connection: websocket_api.ActiveConnection,
+    msg: dict[str, Any],
+) -> None:
+    """Handle get safety configuration command."""
+    entry_id = msg.get("entry_id")
+    coordinators = hass.data.get(DOMAIN, {})
+    if entry_id and entry_id in coordinators:
+        coordinator = coordinators[entry_id]
+    elif coordinators:
+        coordinator = next(iter(coordinators.values()))
+    else:
+        coordinator = None
+
+    if coordinator is None:
+        connection.send_error(
+            msg["id"], websocket_api.ERR_NOT_FOUND, "Safety coordinator not found"
+        )
+        return
+
+    connection.send_result(msg["id"], coordinator.category_config)
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
@@ -73,13 +109,22 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         coordinator = SafetyCoordinator(hass, entry, prepared_options=options)
         hass.data[DOMAIN][entry.entry_id] = coordinator
 
-        coordinator.start_monitoring()
-
-    except Exception as err:
+    except Exception as err:  # noqa: BLE001
         _LOGGER.error("Failed to setup coordinator: %s", err)
         return False
 
+    websocket_api.async_register_command(hass, ws_get_config)
+
     try:
+        panel_dir = hass.config.path("custom_components", DOMAIN, "www")
+        if hasattr(hass, "http"):
+            if hasattr(hass.http, "async_register_static_paths"):
+                await hass.http.async_register_static_paths([
+                    StaticPathConfig("/safety_static", panel_dir, cache_headers=False)
+                ])
+            elif hasattr(hass.http, "register_static_path"):
+                hass.http.register_static_path("/safety_static", panel_dir, cache_headers=False)
+
         async_register_built_in_panel(
             hass,
             component_name="custom",
@@ -89,39 +134,54 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
             config={
                 "_panel_custom": {
                     "name": "safety-panel",
-                    # Zmienione na nową, wewnętrzną ścieżkę z HACS!
-                    "module_url": "/local/safety-panel.js?v=2",
+                    "module_url": "/safety_static/safety-panel.js",
                 }
             },
             require_admin=True,
         )
-    except Exception as err:
+    except Exception as err:  # noqa: BLE001
         _LOGGER.warning("Failed to register frontend panel: %s", err)
 
-    @callback
-    def _state_changed_listener(event) -> None:
-        new_state = event.data.get("new_state")
-        old_state = event.data.get("old_state")
+    unsub_track = None
 
-        if not new_state or (old_state and old_state.state == new_state.state):
-            return
+    def setup_sensor_listeners():
+        nonlocal unsub_track
+        if unsub_track is not None:
+            unsub_track()
+            unsub_track = None
 
-        # Filtruj tylko sensory i czujniki binarne
-        if new_state.domain not in ("binary_sensor", "sensor"):
-            return
+        sensors = set()
+        for cat, cfg in coordinator.category_config.items():
+            if cat != "global" and isinstance(cfg, dict):
+                sensors.update(cfg.get("sensors", []))
 
-        if new_state.state in ["on", "True", "above"]:
-            for cat, cfg in coordinator.category_config.items():
-                if cat == "global":
-                    continue  # Zabezpieczenie przed błędem kategorii globalnej
-                if new_state.entity_id in cfg.get("sensors", []):
-                    hass.async_create_task(
-                        coordinator.trigger_alert(new_state.entity_id, force_cat=cat)
-                    )
+        if sensors:
+            @callback
+            def _state_changed_listener(event) -> None:
+                new_state = event.data.get("new_state")
+                old_state = event.data.get("old_state")
 
-    entry.async_on_unload(
-        hass.bus.async_listen("state_changed", _state_changed_listener)
-    )
+                if not new_state or (old_state and old_state.state == new_state.state):
+                    return
+
+                if new_state.domain not in ("binary_sensor", "sensor"):
+                    return
+
+                if new_state.state in ["on", "True", "above"]:
+                    for cat, cfg in coordinator.category_config.items():
+                        if cat == "global" or not isinstance(cfg, dict):
+                            continue
+                        if new_state.entity_id in cfg.get("sensors", []):
+                            hass.async_create_task(
+                                coordinator.trigger_alert(new_state.entity_id, force_cat=cat)
+                            )
+
+            unsub_track = async_track_state_change_event(
+                hass, list(sensors), _state_changed_listener
+            )
+
+    setup_sensor_listeners()
+    entry.async_on_unload(lambda: unsub_track() if unsub_track else None)
 
     async def _update_settings_service(call) -> None:
         """Handle settings update service calls."""
@@ -213,6 +273,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
                 "[service] Updated coordinator.category_config[%s][%s]", cat, key
             )
 
+        if key in ("sensors", "auto_config", "auto_config_sensors"):
+            setup_sensor_listeners()
+
         # Bezpieczna aktualizacja sensora
         sensor_obj = getattr(coordinator, "sensor", None)
         if sensor_obj and hasattr(sensor_obj, "update_internal_state"):
@@ -231,7 +294,16 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
         _LOGGER.info("[service update_settings] END")
 
-    hass.services.async_register(DOMAIN, "update_settings", _update_settings_service)
+    update_settings_schema = vol.Schema(
+        {
+            vol.Required("category"): str,
+            vol.Required("key"): str,
+            vol.Required("value"): vol.Any(dict, list, str, int, float, bool, None),
+        }
+    )
+    hass.services.async_register(
+        DOMAIN, "update_settings", _update_settings_service, schema=update_settings_schema
+    )
 
     # === NOWY SERWIS: TRYB SERWISOWY ===
     async def _toggle_service_mode_service(call) -> None:
@@ -308,7 +380,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     try:
         await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
-    except Exception as err:
+    except Exception as err:  # noqa: BLE001
         _LOGGER.error("Failed to set up platforms: %s", err)
         return False
 
@@ -322,9 +394,14 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
 async def _async_update_listener(hass: HomeAssistant, entry: ConfigEntry) -> None:
     """Handle options update."""
-    # Celowo ignorujemy przeładowanie! Zapis odbywa się w tle
-    # bez uciążliwego resetowania interfejsu użytkownika.
-    _LOGGER.debug("Safety configuration saved natively in the background")
+    coordinator = hass.data.get(DOMAIN, {}).get(entry.entry_id)
+    if coordinator and "categories" in entry.options:
+        coordinator.category_config = entry.options["categories"]
+        if coordinator.sensor and hasattr(coordinator.sensor, "update_internal_state"):
+            coordinator.sensor.update_internal_state()
+            if hasattr(coordinator.sensor, "async_write_ha_state"):
+                coordinator.sensor.async_write_ha_state()
+    _LOGGER.debug("Safety configuration updated from entry options")
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:

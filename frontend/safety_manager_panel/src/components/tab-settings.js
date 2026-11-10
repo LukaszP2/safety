@@ -5,18 +5,49 @@ import './settings-predictions.js';
 import './settings-modes.js';
 import './settings-channels.js';
 import './settings-messages.js';
-import { HazardBase } from '../hazard-base.js';
+import {
+  fetchSafetyConfig,
+  getSafetyConfig,
+  subscribeSafetyConfig,
+} from '../utils/safety-config.js';
 
 export class TabSettings extends LitElement {
   static properties = { 
     hass: { type: Object },
-    _localOverrides: { type: Object, state: true }
+    _localOverrides: { type: Object, state: true },
+    _config: { state: true },
   };
 
   constructor() {
     super();
     // Lokalny bufor gwarantujący błyskawiczną reakcję interfejsu (brak opóźnień)
     this._localOverrides = {}; 
+    this._config = getSafetyConfig();
+  }
+
+  connectedCallback() {
+    super.connectedCallback();
+    this._unsub = subscribeSafetyConfig((cfg) => {
+      this._config = cfg;
+      this.requestUpdate();
+    });
+    if (this.hass) {
+      fetchSafetyConfig(this.hass);
+    }
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    if (this._unsub) {
+      this._unsub();
+      this._unsub = null;
+    }
+  }
+
+  updated(changedProperties) {
+    if (changedProperties.has('hass') && this.hass) {
+      fetchSafetyConfig(this.hass);
+    }
   }
 
   static styles = css`
@@ -31,20 +62,24 @@ export class TabSettings extends LitElement {
     });
   }
 
-  _handleSettingUpdate(e) {
+  async _handleSettingUpdate(e) {
     const { key, value } = e.detail;
     
     // 1. Zapis natychmiastowy do bufora - UI reaguje od razu
     this._localOverrides = { ...this._localOverrides, [key]: value };
     
-    // 2. Wysłanie komendy do serwera w tle
-    this.hass.callService('safety', 'update_settings', { category: 'global', key: key, value: value })
-      .catch(err => console.warn("Safety Error:", err));
+    // 2. Wysłanie komendy do serwera w tle i odświeżenie konfiguracji
+    try {
+      await this.hass.callService('safety', 'update_settings', { category: 'global', key: key, value: value });
+      await fetchSafetyConfig(this.hass, true);
+    } catch (err) {
+      console.warn("Safety Error:", err);
+    }
   }
 
   render() {
-    const statusId = this._getEntity('sensor', 'status');
-    const baseGlobalCfg = this.hass.states[statusId]?.attributes?.category_config?.global || {};
+    const cfg = this._config || getSafetyConfig();
+    const baseGlobalCfg = cfg?.global || {};
     
     // Łączymy powolne dane z serwera z błyskawicznym buforem lokalnym
     const globalCfg = { ...baseGlobalCfg, ...this._localOverrides };

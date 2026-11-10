@@ -87,22 +87,18 @@ return id ? this.hass.states[id] : null;
 }
 
 _getMonitoredEntities(){
+  const cfg = this.safetyConfig || {};
+  const set = new Set();
 
-const main = this._getMainSensor();
-if(!main) return [];
+  Object.values(cfg).forEach(cat => {
+    if (cat && typeof cat === 'object') {
+      cat.sensors?.forEach(e=>set.add(e));
+      cat.actuators?.forEach(e=>set.add(e));
+      cat.sirens?.forEach(e=>set.add(e));
+    }
+  });
 
-const cfg = main.attributes.category_config || {};
-const set = new Set();
-
-Object.values(cfg).forEach(cat => {
-
-cat.sensors?.forEach(e=>set.add(e));
-cat.actuators?.forEach(e=>set.add(e));
-cat.sirens?.forEach(e=>set.add(e));
-
-});
-
-return [...set];
+  return [...set];
 }
 
 _getStats(){
